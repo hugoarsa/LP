@@ -31,6 +31,10 @@ fsmap :: a -> [a -> a] -> a
 fsmap a [] = a
 fsmap a (f:fs) = fsmap (f a) fs
 
+--alternativas mas succintas
+--fsmap x fs = foldl (\acc f -> f acc) x fs
+--fsmap x fs = foldl (flip id) f a
+
 divideNconquer :: (a -> Maybe b) -> (a -> (a, a)) -> (a -> (a, a) -> (b, b) -> b) -> a -> b
 divideNconquer base divide conquer x =
     case base x of
