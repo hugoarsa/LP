@@ -1,21 +1,34 @@
-// Gramàtica per expressions senzilles
+// Gramàtica per expressions aritmeriques senzilles
 grammar exprs;
-root : expr             // l'etiqueta ja és root
+root : 
+     | instruccio
+     | expr             // l'etiqueta ja és root
      ;
 
-expr : <assoc=right> expr '^' expr    # expressioBinaria
-     | expr '/' expr    # expressioBinaria
-     | expr '*' expr    # expressioBinaria
-     | expr '+' expr    # expressioBinaria
-     | expr '-' expr    # expressioBinaria
+instruccio : assignacio
+           | condicional
+           | write
+           ;
+
+assignacio : ID ':=' expr;
+
+expr : <assoc=right> expr '^' expr    # ExpressioBinaria
+     | expr '*' expr    # ExpressioBinaria
+     | expr '/' expr    # ExpressioBinaria
+     | expr '+' expr    # ExpressioBinaria
+     | expr '-' expr    # ExpressioBinaria
      | NUM              # numero
+     | ID               # variable
      ;
 
-//modificaciones para añadir en un futuro cosas
-//assignacio : ID ':=' expr;
+condicional : 'if' condicio 'then' instruccio 'end';
 
-//write: 'write' ID;
+condicio : expr '=' expr      #igualtat
+         | expr '<>' expr     #desigualtat
+         ;
+
+write: 'write' ID;
 
 NUM : [0-9]+ ;
-//ID : [a-zA-Z]+ ;
+ID : [a-zA-Z]+ ;
 WS  : [ \t\n\r]+ -> skip ;

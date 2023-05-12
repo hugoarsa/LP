@@ -6,6 +6,7 @@ from exprsVisitor import exprsVisitor
 class TreeVisitor(exprsVisitor):
     def __init__(self):
         self.nivell = 0
+        self.taula_continguts = {}
 
     def visitExpressioBinaria(self, ctx):
         [expressio1, operador, expressio2] = list(ctx.getChildren())
@@ -20,44 +21,71 @@ class TreeVisitor(exprsVisitor):
         print("  " * self.nivell + numero.getText())
 
 class EvalVisitor(exprsVisitor):
+    def __init__(self):
+        self.taula_continguts = {}
+
     def visitRoot(self, ctx):
         [expressio] = list(ctx.getChildren())
         print(self.visit(expressio))
+
     def visitExpressioBinaria(self, ctx):
         [expressio1, operador, expressio2] = list(ctx.getChildren())
         if str(operador) == '+':
             return self.visit(expressio1) + self.visit(expressio2)
         elif str(operador) == '-':
             return self.visit(expressio1) - self.visit(expressio2)
-        elif str(operador) == '/':
+        elif str(operador) == '//':
             return self.visit(expressio1) / self.visit(expressio2)
         elif str(operador) == '*':
             return self.visit(expressio1) * self.visit(expressio2)
         elif str(operador) == '^':
             return self.visit(expressio1) ** self.visit(expressio2)
+        
     def visitNumero(self, ctx):
         [numero] = list(ctx.getChildren())
         return int(numero.getText())
+    
+    def visitVariable(self, ctx):
+        [ID] = list(ctx.getChildren())
+        return int(self.taula_continguts[str(ID)])
 
-##afegir un map 
-#visit write y asignacio
+    def visitAssignacio(self, ctx:exprsParser.AssignacioContext):
+        [ID, operador, expressio] = list(ctx.getChildren())
+        result = self.visit(expressio)
+        self.taula_continguts[str(ID)] = result
+
+    def visitWrite(self, ctx:exprsParser.WriteContext):
+        [operador, ID] = list(ctx.getChildren())
+        return self.taula_continguts[str(ID)]
+    
+    def visitCondicional(self, ctx:exprsParser.CondicionalContext):
+        [inici, condicio, then, instruccio, end] = list(ctx.getChildren())
+        if (self.visit(condicio)):
+            return self.visit(instruccio)
+
+    def visitIgualtat(self, ctx):
+        [expressio1, comparador, expressio2] = list(ctx.getChildren())
+        return self.visit(expressio1) == self.visit(expressio2)
+    
+    def visitDesigualtat(self, ctx):
+        [expressio1, comparador, expressio2] = list(ctx.getChildren())
+        return self.visit(expressio1) != self.visit(expressio2)
     
 
-
+visitor2 = EvalVisitor()
 input_stream = InputStream(input('? '))
-lexer = exprsLexer(input_stream)
+while input_stream:
+    lexer = exprsLexer(input_stream)
+    token_stream = CommonTokenStream(lexer)
+    parser = exprsParser(token_stream)
+    tree = parser.root()
 
-#convertir los inputs en un bucle 
-token_stream = CommonTokenStream(lexer)
-parser = exprsParser(token_stream)
-tree = parser.root()
-#if parser.getNumberOfSyntaxErrors() == 0:
-
-#visitador para expresiones
-visitor_tree = TreeVisitor()
-visitor_tree.visit(tree)
-
-#visitador para evaluaciones
-visitor_eval = EvalVisitor()
-visitor_eval.visit(tree)
+#    if parser.getNumberOfSyntaxErrors() == 0:
+#        #visitor = TreeVisitor()
+#        #visitor.visit(tree)
+    visitor2.visit(tree)
+#    else:
+#        print(parser.getNumberOfSyntaxErrors(), 'errors de sintaxi.')
+#        print(tree.toStringTree(recog=parser))
+    input_stream = InputStream(input('? '))
 
