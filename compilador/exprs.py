@@ -39,11 +39,15 @@ class EvalVisitor(exprsVisitor):
         [numero] = list(ctx.getChildren())
         return int(numero.getText())
 
+##afegir un map 
+#visit write y asignacio
     
 
 
 input_stream = InputStream(input('? '))
 lexer = exprsLexer(input_stream)
+
+#convertir los inputs en un bucle 
 token_stream = CommonTokenStream(lexer)
 parser = exprsParser(token_stream)
 tree = parser.root()
