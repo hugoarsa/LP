@@ -4,9 +4,9 @@ main = do
     resultat input
 
 resultat :: String -> IO ()
-resultat linia = hanoi num ori aux dest
+resultat linia = hanoi num ori dest aux
     where
-        [col, ori, aux, dest] = words linia
+        [col, ori, dest, aux] = words linia
         num = read col :: Int
 
 hanoi :: Int -> String -> String -> String -> IO ()

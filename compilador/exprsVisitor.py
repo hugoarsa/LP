@@ -14,6 +14,11 @@ class exprsVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by exprsParser#instruccions.
+    def visitInstruccions(self, ctx:exprsParser.InstruccionsContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by exprsParser#instruccio.
     def visitInstruccio(self, ctx:exprsParser.InstruccioContext):
         return self.visitChildren(ctx)
@@ -21,6 +26,31 @@ class exprsVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by exprsParser#assignacio.
     def visitAssignacio(self, ctx:exprsParser.AssignacioContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by exprsParser#write.
+    def visitWrite(self, ctx:exprsParser.WriteContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by exprsParser#igualtat.
+    def visitIgualtat(self, ctx:exprsParser.IgualtatContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by exprsParser#desigualtat.
+    def visitDesigualtat(self, ctx:exprsParser.DesigualtatContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by exprsParser#condicional.
+    def visitCondicional(self, ctx:exprsParser.CondicionalContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by exprsParser#bucle.
+    def visitBucle(self, ctx:exprsParser.BucleContext):
         return self.visitChildren(ctx)
 
 
@@ -36,26 +66,6 @@ class exprsVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by exprsParser#ExpressioBinaria.
     def visitExpressioBinaria(self, ctx:exprsParser.ExpressioBinariaContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by exprsParser#condicional.
-    def visitCondicional(self, ctx:exprsParser.CondicionalContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by exprsParser#igualtat.
-    def visitIgualtat(self, ctx:exprsParser.IgualtatContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by exprsParser#desigualtat.
-    def visitDesigualtat(self, ctx:exprsParser.DesigualtatContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by exprsParser#write.
-    def visitWrite(self, ctx:exprsParser.WriteContext):
         return self.visitChildren(ctx)
 
 

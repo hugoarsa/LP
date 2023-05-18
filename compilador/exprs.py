@@ -6,7 +6,6 @@ from exprsVisitor import exprsVisitor
 class TreeVisitor(exprsVisitor):
     def __init__(self):
         self.nivell = 0
-        self.taula_continguts = {}
 
     def visitExpressioBinaria(self, ctx):
         [expressio1, operador, expressio2] = list(ctx.getChildren())
@@ -17,6 +16,7 @@ class TreeVisitor(exprsVisitor):
         self.nivell -= 1
 
     def visitNumero(self, ctx):
+        
         [numero] = list(ctx.getChildren())
         print("  " * self.nivell + numero.getText())
 
@@ -55,13 +55,19 @@ class EvalVisitor(exprsVisitor):
         self.taula_continguts[str(ID)] = result
 
     def visitWrite(self, ctx:exprsParser.WriteContext):
-        [operador, ID] = list(ctx.getChildren())
-        return self.taula_continguts[str(ID)]
+        [operador, expr] = list(ctx.getChildren())
+        res = self.visit(expr)
+        print(res)
     
     def visitCondicional(self, ctx:exprsParser.CondicionalContext):
-        [inici, condicio, then, instruccio, end] = list(ctx.getChildren())
-        if (self.visit(condicio)):
-            return self.visit(instruccio)
+        [inici, condicio, then, instruccions, end] = list(ctx.getChildren())
+        if self.visit(condicio):
+            self.visit(instruccions)
+
+    def visitBucle(self, ctx:exprsParser.CondicionalContext):
+        [inici, condicio, do, instruccions, end] = list(ctx.getChildren())
+        while self.visit(condicio):
+            self.visit(instruccions)
 
     def visitIgualtat(self, ctx):
         [expressio1, comparador, expressio2] = list(ctx.getChildren())
