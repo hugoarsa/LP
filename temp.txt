@@ -1,0 +1,24 @@
+   def visitAbstraccio(self, ctx):
+        [op1, vars, op2, terme] = list(ctx.getChildren())
+
+        t = self.visit(terme)
+        for c in reversed(self.visit(vars)):
+            t = Abstraccio(c, t)
+        return t
+
+    def visitVariables(self, ctx):
+        vars = list(ctx.getChildren())
+        r = ''.join([var.getText() for var in vars])
+        return r
+
+
+
+terme : '(' terme ')'                       # parentesis
+      | terme terme                         # aplicacio
+      | ('λ' | '\\') variables '.' terme    # abstraccio
+      | VARIABLE                            # variable
+      ;
+
+variables : VARIABLE+ ;
+
+VARIABLE : [a-z] ;
