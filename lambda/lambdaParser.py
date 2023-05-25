@@ -14,11 +14,11 @@ def serializedATN():
         1,1,1,1,1,1,1,1,1,1,3,1,20,8,1,1,1,1,1,5,1,24,8,1,10,1,12,1,27,9,
         1,1,2,4,2,30,8,2,11,2,12,2,31,1,2,0,1,2,3,0,2,4,0,0,34,0,6,1,0,0,
         0,2,19,1,0,0,0,4,29,1,0,0,0,6,7,3,2,1,0,7,1,1,0,0,0,8,9,6,1,-1,0,
-        9,20,5,5,0,0,10,11,5,1,0,0,11,12,3,2,1,0,12,13,5,2,0,0,13,20,1,0,
-        0,0,14,15,5,4,0,0,15,16,3,4,2,0,16,17,5,3,0,0,17,18,3,2,1,2,18,20,
+        9,20,5,3,0,0,10,11,5,1,0,0,11,12,3,2,1,0,12,13,5,2,0,0,13,20,1,0,
+        0,0,14,15,5,5,0,0,15,16,3,4,2,0,16,17,5,4,0,0,17,18,3,2,1,2,18,20,
         1,0,0,0,19,8,1,0,0,0,19,10,1,0,0,0,19,14,1,0,0,0,20,25,1,0,0,0,21,
         22,10,1,0,0,22,24,3,2,1,2,23,21,1,0,0,0,24,27,1,0,0,0,25,23,1,0,
-        0,0,25,26,1,0,0,0,26,3,1,0,0,0,27,25,1,0,0,0,28,30,5,5,0,0,29,28,
+        0,0,25,26,1,0,0,0,26,3,1,0,0,0,27,25,1,0,0,0,28,30,5,3,0,0,29,28,
         1,0,0,0,30,31,1,0,0,0,31,29,1,0,0,0,31,32,1,0,0,0,32,5,1,0,0,0,3,
         19,25,31
     ]
@@ -33,10 +33,10 @@ class lambdaParser ( Parser ):
 
     sharedContextCache = PredictionContextCache()
 
-    literalNames = [ "<INVALID>", "'('", "')'", "'.'" ]
+    literalNames = [ "<INVALID>", "'('", "')'", "<INVALID>", "'.'" ]
 
-    symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "DOT", "LAMBDA", 
-                      "VAR", "WS" ]
+    symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "VAR", "DOT", 
+                      "LAMBDA", "WS" ]
 
     RULE_root = 0
     RULE_terme = 1
@@ -47,9 +47,9 @@ class lambdaParser ( Parser ):
     EOF = Token.EOF
     T__0=1
     T__1=2
-    DOT=3
-    LAMBDA=4
-    VAR=5
+    VAR=3
+    DOT=4
+    LAMBDA=5
     WS=6
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
@@ -74,6 +74,12 @@ class lambdaParser ( Parser ):
 
         def getRuleIndex(self):
             return lambdaParser.RULE_root
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitRoot" ):
+                return visitor.visitRoot(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -120,6 +126,12 @@ class lambdaParser ( Parser ):
         def VAR(self):
             return self.getToken(lambdaParser.VAR, 0)
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitVariable" ):
+                return visitor.visitVariable(self)
+            else:
+                return visitor.visitChildren(self)
+
 
     class TermeParentitzatContext(TermeContext):
 
@@ -130,6 +142,12 @@ class lambdaParser ( Parser ):
         def terme(self):
             return self.getTypedRuleContext(lambdaParser.TermeContext,0)
 
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitTermeParentitzat" ):
+                return visitor.visitTermeParentitzat(self)
+            else:
+                return visitor.visitChildren(self)
 
 
     class AbstraccioContext(TermeContext):
@@ -149,6 +167,12 @@ class lambdaParser ( Parser ):
             return self.getTypedRuleContext(lambdaParser.TermeContext,0)
 
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAbstraccio" ):
+                return visitor.visitAbstraccio(self)
+            else:
+                return visitor.visitChildren(self)
+
 
     class AplicacioContext(TermeContext):
 
@@ -162,6 +186,12 @@ class lambdaParser ( Parser ):
             else:
                 return self.getTypedRuleContext(lambdaParser.TermeContext,i)
 
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAplicacio" ):
+                return visitor.visitAplicacio(self)
+            else:
+                return visitor.visitChildren(self)
 
 
 
@@ -177,7 +207,7 @@ class lambdaParser ( Parser ):
             self.state = 19
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [5]:
+            if token in [3]:
                 localctx = lambdaParser.VariableContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
@@ -196,7 +226,7 @@ class lambdaParser ( Parser ):
                 self.state = 12
                 self.match(lambdaParser.T__1)
                 pass
-            elif token in [4]:
+            elif token in [5]:
                 localctx = lambdaParser.AbstraccioContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
@@ -258,6 +288,12 @@ class lambdaParser ( Parser ):
         def getRuleIndex(self):
             return lambdaParser.RULE_vars
 
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitVars" ):
+                return visitor.visitVars(self)
+            else:
+                return visitor.visitChildren(self)
+
 
 
 
@@ -277,7 +313,7 @@ class lambdaParser ( Parser ):
                 self.state = 31 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if not (_la==5):
+                if not (_la==3):
                     break
 
         except RecognitionException as re:

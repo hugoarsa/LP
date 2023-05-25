@@ -16,25 +16,25 @@ public class lambdaParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, DOT=3, LAMBDA=4, VAR=5, WS=6;
+		T__0=1, T__1=2, VAR=3, DOT=4, LAMBDA=5, WS=6;
 	public static final int
-		RULE_root = 0, RULE_terme = 1, RULE_vars = 2;
+		RULE_root = 0, RULE_terme = 1, RULE_variables = 2;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"root", "terme", "vars"
+			"root", "terme", "variables"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'('", "')'", "'.'"
+			null, "'('", "')'", null, "'.'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, "DOT", "LAMBDA", "VAR", "WS"
+			null, null, null, "VAR", "DOT", "LAMBDA", "WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -142,8 +142,8 @@ public class lambdaParser extends Parser {
 	}
 	public static class AbstraccioContext extends TermeContext {
 		public TerminalNode LAMBDA() { return getToken(lambdaParser.LAMBDA, 0); }
-		public VarsContext vars() {
-			return getRuleContext(VarsContext.class,0);
+		public VariablesContext variables() {
+			return getRuleContext(VariablesContext.class,0);
 		}
 		public TerminalNode DOT() { return getToken(lambdaParser.DOT, 0); }
 		public TermeContext terme() {
@@ -179,26 +179,17 @@ public class lambdaParser extends Parser {
 			setState(19);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case VAR:
-				{
-				_localctx = new VariableContext(_localctx);
-				_ctx = _localctx;
-				_prevctx = _localctx;
-
-				setState(9);
-				match(VAR);
-				}
-				break;
 			case T__0:
 				{
 				_localctx = new TermeParentitzatContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(10);
+
+				setState(9);
 				match(T__0);
-				setState(11);
+				setState(10);
 				terme(0);
-				setState(12);
+				setState(11);
 				match(T__1);
 				}
 				break;
@@ -207,14 +198,23 @@ public class lambdaParser extends Parser {
 				_localctx = new AbstraccioContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(14);
+				setState(13);
 				match(LAMBDA);
+				setState(14);
+				variables();
 				setState(15);
-				vars();
-				setState(16);
 				match(DOT);
-				setState(17);
+				setState(16);
 				terme(2);
+				}
+				break;
+			case VAR:
+				{
+				_localctx = new VariableContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+				setState(18);
+				match(VAR);
 				}
 				break;
 			default:
@@ -233,9 +233,9 @@ public class lambdaParser extends Parser {
 					_localctx = new AplicacioContext(new TermeContext(_parentctx, _parentState));
 					pushNewRecursionContext(_localctx, _startState, RULE_terme);
 					setState(21);
-					if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
+					if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
 					setState(22);
-					terme(2);
+					terme(4);
 					}
 					} 
 				}
@@ -256,20 +256,20 @@ public class lambdaParser extends Parser {
 		return _localctx;
 	}
 
-	public static class VarsContext extends ParserRuleContext {
+	public static class VariablesContext extends ParserRuleContext {
 		public List<TerminalNode> VAR() { return getTokens(lambdaParser.VAR); }
 		public TerminalNode VAR(int i) {
 			return getToken(lambdaParser.VAR, i);
 		}
-		public VarsContext(ParserRuleContext parent, int invokingState) {
+		public VariablesContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_vars; }
+		@Override public int getRuleIndex() { return RULE_variables; }
 	}
 
-	public final VarsContext vars() throws RecognitionException {
-		VarsContext _localctx = new VarsContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_vars);
+	public final VariablesContext variables() throws RecognitionException {
+		VariablesContext _localctx = new VariablesContext(_ctx, getState());
+		enterRule(_localctx, 4, RULE_variables);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -311,7 +311,7 @@ public class lambdaParser extends Parser {
 	private boolean terme_sempred(TermeContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
-			return precpred(_ctx, 1);
+			return precpred(_ctx, 3);
 		}
 		return true;
 	}
@@ -321,12 +321,12 @@ public class lambdaParser extends Parser {
 		"\3\4\4\t\4\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\5\3\26"+
 		"\n\3\3\3\3\3\7\3\32\n\3\f\3\16\3\35\13\3\3\4\6\4 \n\4\r\4\16\4!\3\4\2"+
 		"\3\4\5\2\4\6\2\2\2$\2\b\3\2\2\2\4\25\3\2\2\2\6\37\3\2\2\2\b\t\5\4\3\2"+
-		"\t\3\3\2\2\2\n\13\b\3\1\2\13\26\7\7\2\2\f\r\7\3\2\2\r\16\5\4\3\2\16\17"+
-		"\7\4\2\2\17\26\3\2\2\2\20\21\7\6\2\2\21\22\5\6\4\2\22\23\7\5\2\2\23\24"+
-		"\5\4\3\4\24\26\3\2\2\2\25\n\3\2\2\2\25\f\3\2\2\2\25\20\3\2\2\2\26\33\3"+
-		"\2\2\2\27\30\f\3\2\2\30\32\5\4\3\4\31\27\3\2\2\2\32\35\3\2\2\2\33\31\3"+
-		"\2\2\2\33\34\3\2\2\2\34\5\3\2\2\2\35\33\3\2\2\2\36 \7\7\2\2\37\36\3\2"+
-		"\2\2 !\3\2\2\2!\37\3\2\2\2!\"\3\2\2\2\"\7\3\2\2\2\5\25\33!";
+		"\t\3\3\2\2\2\n\13\b\3\1\2\13\f\7\3\2\2\f\r\5\4\3\2\r\16\7\4\2\2\16\26"+
+		"\3\2\2\2\17\20\7\7\2\2\20\21\5\6\4\2\21\22\7\6\2\2\22\23\5\4\3\4\23\26"+
+		"\3\2\2\2\24\26\7\5\2\2\25\n\3\2\2\2\25\17\3\2\2\2\25\24\3\2\2\2\26\33"+
+		"\3\2\2\2\27\30\f\5\2\2\30\32\5\4\3\6\31\27\3\2\2\2\32\35\3\2\2\2\33\31"+
+		"\3\2\2\2\33\34\3\2\2\2\34\5\3\2\2\2\35\33\3\2\2\2\36 \7\5\2\2\37\36\3"+
+		"\2\2\2 !\3\2\2\2!\37\3\2\2\2!\"\3\2\2\2\"\7\3\2\2\2\5\25\33!";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

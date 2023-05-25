@@ -34,5 +34,10 @@ class lambdaVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by lambdaParser#vars.
+    def visitVars(self, ctx:lambdaParser.VarsContext):
+        return self.visitChildren(ctx)
+
+
 
 del lambdaParser

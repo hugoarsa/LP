@@ -3,16 +3,18 @@ grammar lambda;
 root : terme
      ;
 
-terme: VAR                      #variable
-     | '(' terme ')'            #termeParentitzat
-     | LAMBDA vars DOT terme    #abstraccio
-     | terme terme              #aplicacio
+terme: '(' terme ')'               #termeParentitzat
+     | terme terme                 #aplicacio
+     | LAMBDA variables DOT terme  #abstraccio
+     | VAR                         #variable
      ;
 
-vars: (VAR)+;
+variables: VAR+;
+
+VAR     : [a-z] ;
+
 
 
 DOT     : '.' ;
 LAMBDA  : 'λ' | '\\' ;
-VAR     : [a-z] ;
 WS      : [ \t\n\r]+ -> skip ;
