@@ -33,17 +33,16 @@ class TreeVisitor(lambdaVisitor):
         return self.visit(ter)
 
     def visitAbstraccio(self, ctx):
-        [l,variables,punt,body] = list(ctx.getChildren())
+        [op1, vars, op2, terme] = list(ctx.getChildren())
 
-        t = self.visit(body)
+        t = self.visit(terme)
+        for c in reversed(self.visit(vars)):
+            t = Abstraction(c, t)
+        return t
 
-        for c in reversed(vars.getText()):
-            t = Abstraction(c,t)
-        return td
-
-    def visitVariables(self,ctx):
+    def visitVariables(self, ctx):
         vars = list(ctx.getChildren())
-        return ''.join([vars.getText() for var in vars])
+        return ''.join([var.getText() for var in vars])
 
     def visitAplicacio(self, ctx):
         [function,argument] = list(ctx.getChildren())
@@ -52,8 +51,30 @@ class TreeVisitor(lambdaVisitor):
     def visitRoot(self, ctx):
         [terme] = list(ctx.getChildren())
         return self.visit(terme)
-
+    
+def show(t: Term) -> string:
+    match t:
+        case Variable(name):
+            return name
+        case Abstraction(var,term):
+            return "(" + "λ" + var + "." + term + ")"
+        case Application(function,argument):
+            return "(" + function + argument + ")"
         
+#ojo con el numero maximo de pasos
+#en los tres puntos ponemos un log de las transacciones
+#de las reducciones que voy haciendo
+def eval(t: Term): #def eval(t: Term,...):-> (Terme?)
+    match t:
+        case Variable(name):
+            return t #, ...
+        case Abstraction(var,term):
+            return "(" + "λ" + var + "." + term + ")"
+        case Application(function,argument):
+            if(isInstance(a,Abstraction)):
+                result = 1 #beta(a,b,...)
+                        #, ... aqui van las historias de transacciones
+                        #si es una abstraccion el resultado es aplciar beta
 
 input_stream = InputStream(input('? '))
 while input_stream:
