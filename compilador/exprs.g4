@@ -26,10 +26,8 @@ condicional : 'if' condicio 'then' instruccions 'end';
 bucle : 'while' condicio 'do' instruccions 'end';
 
 expr : <assoc=right> expr '^' expr    # ExpressioBinaria
-     | expr '*' expr    # ExpressioBinaria
-     | expr '/' expr    # ExpressioBinaria
-     | expr '+' expr    # ExpressioBinaria
-     | expr '-' expr    # ExpressioBinaria
+     | expr ('*' | '/') expr    # ExpressioBinaria
+     | expr ('+' | '-') expr    # ExpressioBinaria
      | NUM              # numero
      | ID               # variable
      ;

@@ -508,6 +508,7 @@ public class exprsParser extends Parser {
 		ExprContext _prevctx = _localctx;
 		int _startState = 16;
 		enterRecursionRule(_localctx, 16, RULE_expr, _p);
+		int _la;
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
@@ -538,7 +539,7 @@ public class exprsParser extends Parser {
 				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(83);
+			setState(77);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -546,7 +547,7 @@ public class exprsParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(81);
+					setState(75);
 					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
 					case 1:
@@ -554,11 +555,11 @@ public class exprsParser extends Parser {
 						_localctx = new ExpressioBinariaContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(66);
-						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
+						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
 						setState(67);
 						match(T__9);
 						setState(68);
-						expr(7);
+						expr(5);
 						}
 						break;
 					case 2:
@@ -566,11 +567,19 @@ public class exprsParser extends Parser {
 						_localctx = new ExpressioBinariaContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(69);
-						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
+						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
 						setState(70);
-						match(T__10);
+						_la = _input.LA(1);
+						if ( !(_la==T__10 || _la==T__11) ) {
+						_errHandler.recoverInline(this);
+						}
+						else {
+							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+							_errHandler.reportMatch(this);
+							consume();
+						}
 						setState(71);
-						expr(7);
+						expr(5);
 						}
 						break;
 					case 3:
@@ -578,41 +587,25 @@ public class exprsParser extends Parser {
 						_localctx = new ExpressioBinariaContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(72);
-						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
-						setState(73);
-						match(T__11);
-						setState(74);
-						expr(6);
-						}
-						break;
-					case 4:
-						{
-						_localctx = new ExpressioBinariaContext(new ExprContext(_parentctx, _parentState));
-						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(75);
-						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
-						setState(76);
-						match(T__12);
-						setState(77);
-						expr(5);
-						}
-						break;
-					case 5:
-						{
-						_localctx = new ExpressioBinariaContext(new ExprContext(_parentctx, _parentState));
-						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(78);
 						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
-						setState(79);
-						match(T__13);
-						setState(80);
+						setState(73);
+						_la = _input.LA(1);
+						if ( !(_la==T__12 || _la==T__13) ) {
+						_errHandler.recoverInline(this);
+						}
+						else {
+							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+							_errHandler.reportMatch(this);
+							consume();
+						}
+						setState(74);
 						expr(4);
 						}
 						break;
 					}
 					} 
 				}
-				setState(85);
+				setState(79);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
 			}
@@ -639,42 +632,37 @@ public class exprsParser extends Parser {
 	private boolean expr_sempred(ExprContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
-			return precpred(_ctx, 7);
-		case 1:
-			return precpred(_ctx, 6);
-		case 2:
 			return precpred(_ctx, 5);
-		case 3:
+		case 1:
 			return precpred(_ctx, 4);
-		case 4:
+		case 2:
 			return precpred(_ctx, 3);
 		}
 		return true;
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\23Y\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\23S\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\3\2\3\2\3\3"+
 		"\7\3\30\n\3\f\3\16\3\33\13\3\3\4\3\4\3\4\3\4\5\4!\n\4\3\5\3\5\3\5\3\5"+
 		"\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\5\7\62\n\7\3\b\3\b\3\b\3"+
 		"\b\3\b\3\b\3\t\3\t\3\t\3\t\3\t\3\t\3\n\3\n\3\n\5\nC\n\n\3\n\3\n\3\n\3"+
-		"\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\7\nT\n\n\f\n\16\nW\13\n"+
-		"\3\n\2\3\22\13\2\4\6\b\n\f\16\20\22\2\2\2Z\2\24\3\2\2\2\4\31\3\2\2\2\6"+
-		" \3\2\2\2\b\"\3\2\2\2\n&\3\2\2\2\f\61\3\2\2\2\16\63\3\2\2\2\209\3\2\2"+
-		"\2\22B\3\2\2\2\24\25\5\4\3\2\25\3\3\2\2\2\26\30\5\6\4\2\27\26\3\2\2\2"+
-		"\30\33\3\2\2\2\31\27\3\2\2\2\31\32\3\2\2\2\32\5\3\2\2\2\33\31\3\2\2\2"+
-		"\34!\5\b\5\2\35!\5\16\b\2\36!\5\20\t\2\37!\5\n\6\2 \34\3\2\2\2 \35\3\2"+
-		"\2\2 \36\3\2\2\2 \37\3\2\2\2!\7\3\2\2\2\"#\7\22\2\2#$\7\3\2\2$%\5\22\n"+
-		"\2%\t\3\2\2\2&\'\7\4\2\2\'(\5\22\n\2(\13\3\2\2\2)*\5\22\n\2*+\7\5\2\2"+
-		"+,\5\22\n\2,\62\3\2\2\2-.\5\22\n\2./\7\6\2\2/\60\5\22\n\2\60\62\3\2\2"+
-		"\2\61)\3\2\2\2\61-\3\2\2\2\62\r\3\2\2\2\63\64\7\7\2\2\64\65\5\f\7\2\65"+
-		"\66\7\b\2\2\66\67\5\4\3\2\678\7\t\2\28\17\3\2\2\29:\7\n\2\2:;\5\f\7\2"+
-		";<\7\13\2\2<=\5\4\3\2=>\7\t\2\2>\21\3\2\2\2?@\b\n\1\2@C\7\21\2\2AC\7\22"+
-		"\2\2B?\3\2\2\2BA\3\2\2\2CU\3\2\2\2DE\f\t\2\2EF\7\f\2\2FT\5\22\n\tGH\f"+
-		"\b\2\2HI\7\r\2\2IT\5\22\n\tJK\f\7\2\2KL\7\16\2\2LT\5\22\n\bMN\f\6\2\2"+
-		"NO\7\17\2\2OT\5\22\n\7PQ\f\5\2\2QR\7\20\2\2RT\5\22\n\6SD\3\2\2\2SG\3\2"+
-		"\2\2SJ\3\2\2\2SM\3\2\2\2SP\3\2\2\2TW\3\2\2\2US\3\2\2\2UV\3\2\2\2V\23\3"+
-		"\2\2\2WU\3\2\2\2\b\31 \61BSU";
+		"\n\3\n\3\n\3\n\3\n\3\n\7\nN\n\n\f\n\16\nQ\13\n\3\n\2\3\22\13\2\4\6\b\n"+
+		"\f\16\20\22\2\4\3\2\r\16\3\2\17\20\2R\2\24\3\2\2\2\4\31\3\2\2\2\6 \3\2"+
+		"\2\2\b\"\3\2\2\2\n&\3\2\2\2\f\61\3\2\2\2\16\63\3\2\2\2\209\3\2\2\2\22"+
+		"B\3\2\2\2\24\25\5\4\3\2\25\3\3\2\2\2\26\30\5\6\4\2\27\26\3\2\2\2\30\33"+
+		"\3\2\2\2\31\27\3\2\2\2\31\32\3\2\2\2\32\5\3\2\2\2\33\31\3\2\2\2\34!\5"+
+		"\b\5\2\35!\5\16\b\2\36!\5\20\t\2\37!\5\n\6\2 \34\3\2\2\2 \35\3\2\2\2 "+
+		"\36\3\2\2\2 \37\3\2\2\2!\7\3\2\2\2\"#\7\22\2\2#$\7\3\2\2$%\5\22\n\2%\t"+
+		"\3\2\2\2&\'\7\4\2\2\'(\5\22\n\2(\13\3\2\2\2)*\5\22\n\2*+\7\5\2\2+,\5\22"+
+		"\n\2,\62\3\2\2\2-.\5\22\n\2./\7\6\2\2/\60\5\22\n\2\60\62\3\2\2\2\61)\3"+
+		"\2\2\2\61-\3\2\2\2\62\r\3\2\2\2\63\64\7\7\2\2\64\65\5\f\7\2\65\66\7\b"+
+		"\2\2\66\67\5\4\3\2\678\7\t\2\28\17\3\2\2\29:\7\n\2\2:;\5\f\7\2;<\7\13"+
+		"\2\2<=\5\4\3\2=>\7\t\2\2>\21\3\2\2\2?@\b\n\1\2@C\7\21\2\2AC\7\22\2\2B"+
+		"?\3\2\2\2BA\3\2\2\2CO\3\2\2\2DE\f\7\2\2EF\7\f\2\2FN\5\22\n\7GH\f\6\2\2"+
+		"HI\t\2\2\2IN\5\22\n\7JK\f\5\2\2KL\t\3\2\2LN\5\22\n\6MD\3\2\2\2MG\3\2\2"+
+		"\2MJ\3\2\2\2NQ\3\2\2\2OM\3\2\2\2OP\3\2\2\2P\23\3\2\2\2QO\3\2\2\2\b\31"+
+		" \61BMO";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
