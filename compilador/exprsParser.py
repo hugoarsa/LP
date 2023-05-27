@@ -1,41 +1,41 @@
-# Generated from exprs.g4 by ANTLR 4.13.0
+# Generated from exprs.g4 by ANTLR 4.7.2
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO
+from typing.io import TextIO
 import sys
-if sys.version_info[1] > 5:
-	from typing import TextIO
-else:
-	from typing.io import TextIO
 
 def serializedATN():
-    return [
-        4,1,17,81,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
-        6,2,7,7,7,2,8,7,8,1,0,1,0,1,1,5,1,22,8,1,10,1,12,1,25,9,1,1,2,1,
-        2,1,2,1,2,3,2,31,8,2,1,3,1,3,1,3,1,3,1,4,1,4,1,4,1,5,1,5,1,5,1,5,
-        1,5,1,5,1,5,1,5,3,5,48,8,5,1,6,1,6,1,6,1,6,1,6,1,6,1,7,1,7,1,7,1,
-        7,1,7,1,7,1,8,1,8,1,8,3,8,65,8,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,
-        1,8,5,8,76,8,8,10,8,12,8,79,9,8,1,8,0,1,16,9,0,2,4,6,8,10,12,14,
-        16,0,2,1,0,11,12,1,0,13,14,80,0,18,1,0,0,0,2,23,1,0,0,0,4,30,1,0,
-        0,0,6,32,1,0,0,0,8,36,1,0,0,0,10,47,1,0,0,0,12,49,1,0,0,0,14,55,
-        1,0,0,0,16,64,1,0,0,0,18,19,3,2,1,0,19,1,1,0,0,0,20,22,3,4,2,0,21,
-        20,1,0,0,0,22,25,1,0,0,0,23,21,1,0,0,0,23,24,1,0,0,0,24,3,1,0,0,
-        0,25,23,1,0,0,0,26,31,3,6,3,0,27,31,3,12,6,0,28,31,3,14,7,0,29,31,
-        3,8,4,0,30,26,1,0,0,0,30,27,1,0,0,0,30,28,1,0,0,0,30,29,1,0,0,0,
-        31,5,1,0,0,0,32,33,5,16,0,0,33,34,5,1,0,0,34,35,3,16,8,0,35,7,1,
-        0,0,0,36,37,5,2,0,0,37,38,3,16,8,0,38,9,1,0,0,0,39,40,3,16,8,0,40,
-        41,5,3,0,0,41,42,3,16,8,0,42,48,1,0,0,0,43,44,3,16,8,0,44,45,5,4,
-        0,0,45,46,3,16,8,0,46,48,1,0,0,0,47,39,1,0,0,0,47,43,1,0,0,0,48,
-        11,1,0,0,0,49,50,5,5,0,0,50,51,3,10,5,0,51,52,5,6,0,0,52,53,3,2,
-        1,0,53,54,5,7,0,0,54,13,1,0,0,0,55,56,5,8,0,0,56,57,3,10,5,0,57,
-        58,5,9,0,0,58,59,3,2,1,0,59,60,5,7,0,0,60,15,1,0,0,0,61,62,6,8,-1,
-        0,62,65,5,15,0,0,63,65,5,16,0,0,64,61,1,0,0,0,64,63,1,0,0,0,65,77,
-        1,0,0,0,66,67,10,5,0,0,67,68,5,10,0,0,68,76,3,16,8,5,69,70,10,4,
-        0,0,70,71,7,0,0,0,71,76,3,16,8,5,72,73,10,3,0,0,73,74,7,1,0,0,74,
-        76,3,16,8,4,75,66,1,0,0,0,75,69,1,0,0,0,75,72,1,0,0,0,76,79,1,0,
-        0,0,77,75,1,0,0,0,77,78,1,0,0,0,78,17,1,0,0,0,79,77,1,0,0,0,6,23,
-        30,47,64,75,77
-    ]
+    with StringIO() as buf:
+        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\23")
+        buf.write("S\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b")
+        buf.write("\t\b\4\t\t\t\4\n\t\n\3\2\3\2\3\3\7\3\30\n\3\f\3\16\3\33")
+        buf.write("\13\3\3\4\3\4\3\4\3\4\5\4!\n\4\3\5\3\5\3\5\3\5\3\6\3\6")
+        buf.write("\3\6\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\5\7\62\n\7\3\b\3")
+        buf.write("\b\3\b\3\b\3\b\3\b\3\t\3\t\3\t\3\t\3\t\3\t\3\n\3\n\3\n")
+        buf.write("\5\nC\n\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\7\nN\n\n")
+        buf.write("\f\n\16\nQ\13\n\3\n\2\3\22\13\2\4\6\b\n\f\16\20\22\2\4")
+        buf.write("\3\2\r\16\3\2\17\20\2R\2\24\3\2\2\2\4\31\3\2\2\2\6 \3")
+        buf.write("\2\2\2\b\"\3\2\2\2\n&\3\2\2\2\f\61\3\2\2\2\16\63\3\2\2")
+        buf.write("\2\209\3\2\2\2\22B\3\2\2\2\24\25\5\4\3\2\25\3\3\2\2\2")
+        buf.write("\26\30\5\6\4\2\27\26\3\2\2\2\30\33\3\2\2\2\31\27\3\2\2")
+        buf.write("\2\31\32\3\2\2\2\32\5\3\2\2\2\33\31\3\2\2\2\34!\5\b\5")
+        buf.write("\2\35!\5\16\b\2\36!\5\20\t\2\37!\5\n\6\2 \34\3\2\2\2 ")
+        buf.write("\35\3\2\2\2 \36\3\2\2\2 \37\3\2\2\2!\7\3\2\2\2\"#\7\22")
+        buf.write("\2\2#$\7\3\2\2$%\5\22\n\2%\t\3\2\2\2&\'\7\4\2\2\'(\5\22")
+        buf.write("\n\2(\13\3\2\2\2)*\5\22\n\2*+\7\5\2\2+,\5\22\n\2,\62\3")
+        buf.write("\2\2\2-.\5\22\n\2./\7\6\2\2/\60\5\22\n\2\60\62\3\2\2\2")
+        buf.write("\61)\3\2\2\2\61-\3\2\2\2\62\r\3\2\2\2\63\64\7\7\2\2\64")
+        buf.write("\65\5\f\7\2\65\66\7\b\2\2\66\67\5\4\3\2\678\7\t\2\28\17")
+        buf.write("\3\2\2\29:\7\n\2\2:;\5\f\7\2;<\7\13\2\2<=\5\4\3\2=>\7")
+        buf.write("\t\2\2>\21\3\2\2\2?@\b\n\1\2@C\7\21\2\2AC\7\22\2\2B?\3")
+        buf.write("\2\2\2BA\3\2\2\2CO\3\2\2\2DE\f\7\2\2EF\7\f\2\2FN\5\22")
+        buf.write("\n\7GH\f\6\2\2HI\t\2\2\2IN\5\22\n\7JK\f\5\2\2KL\t\3\2")
+        buf.write("\2LN\5\22\n\6MD\3\2\2\2MG\3\2\2\2MJ\3\2\2\2NQ\3\2\2\2")
+        buf.write("OM\3\2\2\2OP\3\2\2\2P\23\3\2\2\2QO\3\2\2\2\b\31 \61BM")
+        buf.write("O")
+        return buf.getvalue()
+
 
 class exprsParser ( Parser ):
 
@@ -91,15 +91,13 @@ class exprsParser ( Parser ):
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
-        self.checkVersion("4.13.0")
+        self.checkVersion("4.7.2")
         self._interp = ParserATNSimulator(self, self.atn, self.decisionsToDFA, self.sharedContextCache)
         self._predicates = None
 
 
 
-
     class RootContext(ParserRuleContext):
-        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -137,9 +135,7 @@ class exprsParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class InstruccionsContext(ParserRuleContext):
-        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -174,7 +170,7 @@ class exprsParser ( Parser ):
             self.state = 23
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & 65828) != 0):
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << exprsParser.T__1) | (1 << exprsParser.T__4) | (1 << exprsParser.T__7) | (1 << exprsParser.ID))) != 0):
                 self.state = 20
                 self.instruccio()
                 self.state = 25
@@ -189,9 +185,7 @@ class exprsParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class InstruccioContext(ParserRuleContext):
-        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -233,22 +227,22 @@ class exprsParser ( Parser ):
             self.state = 30
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [16]:
+            if token in [exprsParser.ID]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 26
                 self.assignacio()
                 pass
-            elif token in [5]:
+            elif token in [exprsParser.T__4]:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 27
                 self.condicional()
                 pass
-            elif token in [8]:
+            elif token in [exprsParser.T__7]:
                 self.enterOuterAlt(localctx, 3)
                 self.state = 28
                 self.bucle()
                 pass
-            elif token in [2]:
+            elif token in [exprsParser.T__1]:
                 self.enterOuterAlt(localctx, 4)
                 self.state = 29
                 self.write()
@@ -264,9 +258,7 @@ class exprsParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class AssignacioContext(ParserRuleContext):
-        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -311,9 +303,7 @@ class exprsParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class WriteContext(ParserRuleContext):
-        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -353,9 +343,7 @@ class exprsParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class CondicioContext(ParserRuleContext):
-        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -451,9 +439,7 @@ class exprsParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class CondicionalContext(ParserRuleContext):
-        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -503,9 +489,7 @@ class exprsParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class BucleContext(ParserRuleContext):
-        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -555,9 +539,7 @@ class exprsParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class ExprContext(ParserRuleContext):
-        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -638,7 +620,7 @@ class exprsParser ( Parser ):
             self.state = 64
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [15]:
+            if token in [exprsParser.NUM]:
                 localctx = exprsParser.NumeroContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
@@ -646,7 +628,7 @@ class exprsParser ( Parser ):
                 self.state = 62
                 self.match(exprsParser.NUM)
                 pass
-            elif token in [16]:
+            elif token in [exprsParser.ID]:
                 localctx = exprsParser.VariableContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
@@ -690,7 +672,7 @@ class exprsParser ( Parser ):
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 4)")
                         self.state = 70
                         _la = self._input.LA(1)
-                        if not(_la==11 or _la==12):
+                        if not(_la==exprsParser.T__10 or _la==exprsParser.T__11):
                             self._errHandler.recoverInline(self)
                         else:
                             self._errHandler.reportMatch(self)
@@ -708,7 +690,7 @@ class exprsParser ( Parser ):
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 3)")
                         self.state = 73
                         _la = self._input.LA(1)
-                        if not(_la==13 or _la==14):
+                        if not(_la==exprsParser.T__12 or _la==exprsParser.T__13):
                             self._errHandler.recoverInline(self)
                         else:
                             self._errHandler.reportMatch(self)

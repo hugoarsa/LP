@@ -1,31 +1,31 @@
-# Generated from lambda.g4 by ANTLR 4.13.0
+# Generated from lc.g4 by ANTLR 4.7.2
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO
+from typing.io import TextIO
 import sys
-if sys.version_info[1] > 5:
-	from typing import TextIO
-else:
-	from typing.io import TextIO
 
 def serializedATN():
-    return [
-        4,1,6,34,2,0,7,0,2,1,7,1,2,2,7,2,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,
-        1,1,1,1,1,1,1,1,1,1,3,1,20,8,1,1,1,1,1,5,1,24,8,1,10,1,12,1,27,9,
-        1,1,2,4,2,30,8,2,11,2,12,2,31,1,2,0,1,2,3,0,2,4,0,0,34,0,6,1,0,0,
-        0,2,19,1,0,0,0,4,29,1,0,0,0,6,7,3,2,1,0,7,1,1,0,0,0,8,9,6,1,-1,0,
-        9,20,5,3,0,0,10,11,5,1,0,0,11,12,3,2,1,0,12,13,5,2,0,0,13,20,1,0,
-        0,0,14,15,5,5,0,0,15,16,3,4,2,0,16,17,5,4,0,0,17,18,3,2,1,2,18,20,
-        1,0,0,0,19,8,1,0,0,0,19,10,1,0,0,0,19,14,1,0,0,0,20,25,1,0,0,0,21,
-        22,10,1,0,0,22,24,3,2,1,2,23,21,1,0,0,0,24,27,1,0,0,0,25,23,1,0,
-        0,0,25,26,1,0,0,0,26,3,1,0,0,0,27,25,1,0,0,0,28,30,5,3,0,0,29,28,
-        1,0,0,0,30,31,1,0,0,0,31,29,1,0,0,0,31,32,1,0,0,0,32,5,1,0,0,0,3,
-        19,25,31
-    ]
+    with StringIO() as buf:
+        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\t")
+        buf.write("$\4\2\t\2\4\3\t\3\4\4\t\4\3\2\3\2\3\3\3\3\3\3\3\3\3\3")
+        buf.write("\3\3\3\3\3\3\3\3\3\3\3\3\5\3\26\n\3\3\3\3\3\7\3\32\n\3")
+        buf.write("\f\3\16\3\35\13\3\3\4\6\4 \n\4\r\4\16\4!\3\4\2\3\4\5\2")
+        buf.write("\4\6\2\3\3\2\5\6\2$\2\b\3\2\2\2\4\25\3\2\2\2\6\37\3\2")
+        buf.write("\2\2\b\t\5\4\3\2\t\3\3\2\2\2\n\13\b\3\1\2\13\f\7\3\2\2")
+        buf.write("\f\r\5\4\3\2\r\16\7\4\2\2\16\26\3\2\2\2\17\20\t\2\2\2")
+        buf.write("\20\21\5\6\4\2\21\22\7\b\2\2\22\23\5\4\3\4\23\26\3\2\2")
+        buf.write("\2\24\26\7\7\2\2\25\n\3\2\2\2\25\17\3\2\2\2\25\24\3\2")
+        buf.write("\2\2\26\33\3\2\2\2\27\30\f\5\2\2\30\32\5\4\3\6\31\27\3")
+        buf.write("\2\2\2\32\35\3\2\2\2\33\31\3\2\2\2\33\34\3\2\2\2\34\5")
+        buf.write("\3\2\2\2\35\33\3\2\2\2\36 \7\7\2\2\37\36\3\2\2\2 !\3\2")
+        buf.write("\2\2!\37\3\2\2\2!\"\3\2\2\2\"\7\3\2\2\2\5\25\33!")
+        return buf.getvalue()
 
-class lambdaParser ( Parser ):
 
-    grammarFileName = "lambda.g4"
+class lcParser ( Parser ):
+
+    grammarFileName = "lc.g4"
 
     atn = ATNDeserializer().deserialize(serializedATN())
 
@@ -33,47 +33,47 @@ class lambdaParser ( Parser ):
 
     sharedContextCache = PredictionContextCache()
 
-    literalNames = [ "<INVALID>", "'('", "')'", "<INVALID>", "'.'" ]
+    literalNames = [ "<INVALID>", "'('", "')'", "'\u03BB'", "'\\'", "<INVALID>", 
+                     "'.'" ]
 
-    symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "VAR", "DOT", 
-                      "LAMBDA", "WS" ]
+    symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
+                      "<INVALID>", "VAR", "DOT", "WS" ]
 
     RULE_root = 0
     RULE_terme = 1
-    RULE_vars = 2
+    RULE_variables = 2
 
-    ruleNames =  [ "root", "terme", "vars" ]
+    ruleNames =  [ "root", "terme", "variables" ]
 
     EOF = Token.EOF
     T__0=1
     T__1=2
-    VAR=3
-    DOT=4
-    LAMBDA=5
-    WS=6
+    T__2=3
+    T__3=4
+    VAR=5
+    DOT=6
+    WS=7
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
-        self.checkVersion("4.13.0")
+        self.checkVersion("4.7.2")
         self._interp = ParserATNSimulator(self, self.atn, self.decisionsToDFA, self.sharedContextCache)
         self._predicates = None
 
 
 
-
     class RootContext(ParserRuleContext):
-        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
             self.parser = parser
 
         def terme(self):
-            return self.getTypedRuleContext(lambdaParser.TermeContext,0)
+            return self.getTypedRuleContext(lcParser.TermeContext,0)
 
 
         def getRuleIndex(self):
-            return lambdaParser.RULE_root
+            return lcParser.RULE_root
 
         def accept(self, visitor:ParseTreeVisitor):
             if hasattr( visitor, "visitRoot" ):
@@ -86,7 +86,7 @@ class lambdaParser ( Parser ):
 
     def root(self):
 
-        localctx = lambdaParser.RootContext(self, self._ctx, self.state)
+        localctx = lcParser.RootContext(self, self._ctx, self.state)
         self.enterRule(localctx, 0, self.RULE_root)
         try:
             self.enterOuterAlt(localctx, 1)
@@ -100,9 +100,7 @@ class lambdaParser ( Parser ):
             self.exitRule()
         return localctx
 
-
     class TermeContext(ParserRuleContext):
-        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -110,7 +108,7 @@ class lambdaParser ( Parser ):
 
 
         def getRuleIndex(self):
-            return lambdaParser.RULE_terme
+            return lcParser.RULE_terme
 
      
         def copyFrom(self, ctx:ParserRuleContext):
@@ -119,12 +117,12 @@ class lambdaParser ( Parser ):
 
     class VariableContext(TermeContext):
 
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a lambdaParser.TermeContext
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a lcParser.TermeContext
             super().__init__(parser)
             self.copyFrom(ctx)
 
         def VAR(self):
-            return self.getToken(lambdaParser.VAR, 0)
+            return self.getToken(lcParser.VAR, 0)
 
         def accept(self, visitor:ParseTreeVisitor):
             if hasattr( visitor, "visitVariable" ):
@@ -135,12 +133,12 @@ class lambdaParser ( Parser ):
 
     class TermeParentitzatContext(TermeContext):
 
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a lambdaParser.TermeContext
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a lcParser.TermeContext
             super().__init__(parser)
             self.copyFrom(ctx)
 
         def terme(self):
-            return self.getTypedRuleContext(lambdaParser.TermeContext,0)
+            return self.getTypedRuleContext(lcParser.TermeContext,0)
 
 
         def accept(self, visitor:ParseTreeVisitor):
@@ -152,19 +150,17 @@ class lambdaParser ( Parser ):
 
     class AbstraccioContext(TermeContext):
 
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a lambdaParser.TermeContext
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a lcParser.TermeContext
             super().__init__(parser)
             self.copyFrom(ctx)
 
-        def LAMBDA(self):
-            return self.getToken(lambdaParser.LAMBDA, 0)
-        def vars_(self):
-            return self.getTypedRuleContext(lambdaParser.VarsContext,0)
+        def variables(self):
+            return self.getTypedRuleContext(lcParser.VariablesContext,0)
 
         def DOT(self):
-            return self.getToken(lambdaParser.DOT, 0)
+            return self.getToken(lcParser.DOT, 0)
         def terme(self):
-            return self.getTypedRuleContext(lambdaParser.TermeContext,0)
+            return self.getTypedRuleContext(lcParser.TermeContext,0)
 
 
         def accept(self, visitor:ParseTreeVisitor):
@@ -176,15 +172,15 @@ class lambdaParser ( Parser ):
 
     class AplicacioContext(TermeContext):
 
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a lambdaParser.TermeContext
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a lcParser.TermeContext
             super().__init__(parser)
             self.copyFrom(ctx)
 
         def terme(self, i:int=None):
             if i is None:
-                return self.getTypedRuleContexts(lambdaParser.TermeContext)
+                return self.getTypedRuleContexts(lcParser.TermeContext)
             else:
-                return self.getTypedRuleContext(lambdaParser.TermeContext,i)
+                return self.getTypedRuleContext(lcParser.TermeContext,i)
 
 
         def accept(self, visitor:ParseTreeVisitor):
@@ -198,46 +194,52 @@ class lambdaParser ( Parser ):
     def terme(self, _p:int=0):
         _parentctx = self._ctx
         _parentState = self.state
-        localctx = lambdaParser.TermeContext(self, self._ctx, _parentState)
+        localctx = lcParser.TermeContext(self, self._ctx, _parentState)
         _prevctx = localctx
         _startState = 2
         self.enterRecursionRule(localctx, 2, self.RULE_terme, _p)
+        self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 19
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [3]:
-                localctx = lambdaParser.VariableContext(self, localctx)
+            if token in [lcParser.T__0]:
+                localctx = lcParser.TermeParentitzatContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
 
                 self.state = 9
-                self.match(lambdaParser.VAR)
-                pass
-            elif token in [1]:
-                localctx = lambdaParser.TermeParentitzatContext(self, localctx)
-                self._ctx = localctx
-                _prevctx = localctx
+                self.match(lcParser.T__0)
                 self.state = 10
-                self.match(lambdaParser.T__0)
-                self.state = 11
                 self.terme(0)
-                self.state = 12
-                self.match(lambdaParser.T__1)
+                self.state = 11
+                self.match(lcParser.T__1)
                 pass
-            elif token in [5]:
-                localctx = lambdaParser.AbstraccioContext(self, localctx)
+            elif token in [lcParser.T__2, lcParser.T__3]:
+                localctx = lcParser.AbstraccioContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
+                self.state = 13
+                _la = self._input.LA(1)
+                if not(_la==lcParser.T__2 or _la==lcParser.T__3):
+                    self._errHandler.recoverInline(self)
+                else:
+                    self._errHandler.reportMatch(self)
+                    self.consume()
                 self.state = 14
-                self.match(lambdaParser.LAMBDA)
+                self.variables()
                 self.state = 15
-                self.vars_()
+                self.match(lcParser.DOT)
                 self.state = 16
-                self.match(lambdaParser.DOT)
-                self.state = 17
                 self.terme(2)
+                pass
+            elif token in [lcParser.VAR]:
+                localctx = lcParser.VariableContext(self, localctx)
+                self._ctx = localctx
+                _prevctx = localctx
+                self.state = 18
+                self.match(lcParser.VAR)
                 pass
             else:
                 raise NoViableAltException(self)
@@ -251,14 +253,14 @@ class lambdaParser ( Parser ):
                     if self._parseListeners is not None:
                         self.triggerExitRuleEvent()
                     _prevctx = localctx
-                    localctx = lambdaParser.AplicacioContext(self, lambdaParser.TermeContext(self, _parentctx, _parentState))
+                    localctx = lcParser.AplicacioContext(self, lcParser.TermeContext(self, _parentctx, _parentState))
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_terme)
                     self.state = 21
-                    if not self.precpred(self._ctx, 1):
+                    if not self.precpred(self._ctx, 3):
                         from antlr4.error.Errors import FailedPredicateException
-                        raise FailedPredicateException(self, "self.precpred(self._ctx, 1)")
+                        raise FailedPredicateException(self, "self.precpred(self._ctx, 3)")
                     self.state = 22
-                    self.terme(2) 
+                    self.terme(4) 
                 self.state = 27
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,1,self._ctx)
@@ -271,9 +273,7 @@ class lambdaParser ( Parser ):
             self.unrollRecursionContexts(_parentctx)
         return localctx
 
-
-    class VarsContext(ParserRuleContext):
-        __slots__ = 'parser'
+    class VariablesContext(ParserRuleContext):
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -281,26 +281,26 @@ class lambdaParser ( Parser ):
 
         def VAR(self, i:int=None):
             if i is None:
-                return self.getTokens(lambdaParser.VAR)
+                return self.getTokens(lcParser.VAR)
             else:
-                return self.getToken(lambdaParser.VAR, i)
+                return self.getToken(lcParser.VAR, i)
 
         def getRuleIndex(self):
-            return lambdaParser.RULE_vars
+            return lcParser.RULE_variables
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitVars" ):
-                return visitor.visitVars(self)
+            if hasattr( visitor, "visitVariables" ):
+                return visitor.visitVariables(self)
             else:
                 return visitor.visitChildren(self)
 
 
 
 
-    def vars_(self):
+    def variables(self):
 
-        localctx = lambdaParser.VarsContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 4, self.RULE_vars)
+        localctx = lcParser.VariablesContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 4, self.RULE_variables)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
@@ -309,11 +309,11 @@ class lambdaParser ( Parser ):
             _la = self._input.LA(1)
             while True:
                 self.state = 28
-                self.match(lambdaParser.VAR)
+                self.match(lcParser.VAR)
                 self.state = 31 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if not (_la==3):
+                if not (_la==lcParser.VAR):
                     break
 
         except RecognitionException as re:
@@ -338,7 +338,7 @@ class lambdaParser ( Parser ):
 
     def terme_sempred(self, localctx:TermeContext, predIndex:int):
             if predIndex == 0:
-                return self.precpred(self._ctx, 1)
+                return self.precpred(self._ctx, 3)
          
 
 

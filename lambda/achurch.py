@@ -2,9 +2,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from antlr4 import *
-from lambdaLexer import lambdaLexer
-from lambdaParser import lambdaParser
-from lambdaVisitor import lambdaVisitor
+from lcLexer import lcLexer
+from lcParser import lcParser
+from lcVisitor import lcVisitor
 
 @dataclass
 class Variable:
@@ -22,7 +22,7 @@ class Application:
 
 Term = Variable | Abstraction | Application
 
-class TreeVisitor(lambdaVisitor):
+class TreeVisitor(lcVisitor):
     def visitVariable(self, ctx):
         [var] = list(ctx.getChildren())
         print(var.getText())
@@ -52,7 +52,7 @@ class TreeVisitor(lambdaVisitor):
         [terme] = list(ctx.getChildren())
         return self.visit(terme)
     
-def show(t: Term) -> string:
+def show(t: Term):
     match t:
         case Variable(name):
             return name
@@ -61,26 +61,13 @@ def show(t: Term) -> string:
         case Application(function,argument):
             return "(" + function + argument + ")"
         
-#ojo con el numero maximo de pasos
-#en los tres puntos ponemos un log de las transacciones
-#de las reducciones que voy haciendo
-def eval(t: Term): #def eval(t: Term,...):-> (Terme?)
-    match t:
-        case Variable(name):
-            return t #, ...
-        case Abstraction(var,term):
-            return "(" + "λ" + var + "." + term + ")"
-        case Application(function,argument):
-            if(isInstance(a,Abstraction)):
-                result = 1 #beta(a,b,...)
-                        #, ... aqui van las historias de transacciones
-                        #si es una abstraccion el resultado es aplciar beta
+
 
 input_stream = InputStream(input('? '))
 while input_stream:
-    lexer = lambdaLexer(input_stream)
+    lexer = lcLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
-    parser = lambdaParser(token_stream)
+    parser = lcParser(token_stream)
     tree = parser.root()
 
     print(tree.toStringTree(recog=parser))
@@ -89,6 +76,5 @@ while input_stream:
     expresion = visitor.visit(tree)
     print(expresion)
     
-    #visitor2.visit(tree)
     input_stream = InputStream(input('? '))
 
