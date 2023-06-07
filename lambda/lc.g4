@@ -13,8 +13,5 @@ variables: VAR+;
 
 VAR     : [a-z] ;
 
-
-
 DOT     : '.' ;
-//LAM     : 'λ' | '\\' ;
 WS      : [ \t\n\r]+ -> skip ;
