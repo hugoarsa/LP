@@ -57,9 +57,9 @@ def show(t: Term):
         case Variable(name):
             return name
         case Abstraction(var,term):
-            return "(" + "λ" + var + "." + term + ")"
+            return "(" + "λ" + var + "." + show(term) + ")"
         case Application(function,argument):
-            return "(" + function + argument + ")"
+            return "(" + show(function) + show(argument) + ")"
         
 
 
@@ -75,6 +75,6 @@ while input_stream:
     visitor = TreeVisitor()
     expresion = visitor.visit(tree)
     print(expresion)
+    print(show(expresion))
     
     input_stream = InputStream(input('? '))
-
