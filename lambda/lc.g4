@@ -5,6 +5,7 @@ root : terme
      ;
 
 terme: '(' terme ')'                         #termeParentitzat
+     | terme INMACRO terme                   #macroInfija
      | terme terme                           #aplicacio
      | ('λ' | '\\') variables DOT terme      #abstraccio
      | VAR                                   #variable
@@ -13,10 +14,11 @@ terme: '(' terme ')'                         #termeParentitzat
 
 variables: VAR+;
 
-assignacio1: MACRO('=' | '≡')terme;
+assignacio1: (MACRO|INMACRO) ('=' | '≡') terme;
 
 VAR     : [a-z] ;
 MACRO   : [A-Z0-9]+ ;
+INMACRO : [\-+*/] ;
 
 DOT     : '.' ;
 WS      : [ \t\n\r]+ -> skip ;

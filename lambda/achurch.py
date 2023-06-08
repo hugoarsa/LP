@@ -33,6 +33,10 @@ class TreeVisitor(lcVisitor):
     def visitTermeParentitzat(self, ctx):
         [p1,ter,p2] = list(ctx.getChildren())
         return self.visit(ter)
+    
+    def visitMacroInfija(self, ctx):
+        [terme1,ID,terme2] = list(ctx.getChildren())
+        return Application(Application(self.macros[str(ID)],self.visit(terme1)),self.visit(terme2))
 
     def visitAbstraccio(self, ctx):
         [op1, vars, op2, terme] = list(ctx.getChildren())
@@ -117,16 +121,21 @@ def evaluate_term(term: Term, max_reductions: int) -> Term:
         term = beta_reduction(term)
 
         match term:
+            case Application(function,argument):
+
+                new_function = evaluate_recursive(function, reductions - 1)
+                if new_function != function:
+                    return evaluate_recursive(Application(new_function, argument), reductions - 1)
+                
+                new_argument = evaluate_recursive(argument, reductions - 1)
+                if new_argument != argument:
+                    return evaluate_recursive(Application(function, new_argument), reductions - 1)
+                    
+                
             case Abstraction(var,body):
                 new_body = evaluate_recursive(body, reductions - 1)
                 if new_body != body:
                     return evaluate_recursive(Abstraction(var, new_body), reductions - 1)
-            case Application(function,argument):
-                new_function = evaluate_recursive(function, reductions - 1)
-                new_argument = evaluate_recursive(argument, reductions - 1)
-
-                if new_function != function or new_argument != argument:
-                    return evaluate_recursive(Application(new_function, new_argument), reductions - 1)
                 
         return term
     
