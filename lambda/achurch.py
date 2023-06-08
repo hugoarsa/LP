@@ -42,6 +42,10 @@ class TreeVisitor(lcVisitor):
     def visitVariables(self, ctx):
         vars = list(ctx.getChildren())
         return ''.join([var.getText() for var in vars])
+    
+    def visitMacro(self, ctx):
+        [ID] = list(ctx.getChildren())
+        return macros[str(ID)]
 
     def visitAplicacio(self, ctx):
         [function,argument] = list(ctx.getChildren())
@@ -50,6 +54,11 @@ class TreeVisitor(lcVisitor):
     def visitRoot(self, ctx):
         [terme] = list(ctx.getChildren())
         return self.visit(terme)
+    
+    def visitAssignacio1(self, ctx):  
+        [m, eq, terme] = list (ctx.getChildren())
+        macros[str(m)] = self.visit(terme)
+        return 0
     
 def show(t: Term):
     match t:
@@ -117,6 +126,8 @@ def evaluate_term(term: Term, max_reductions: int) -> Term:
     return evaluate_recursive(term, max_reductions)
 
 
+
+macros = {}
 input_stream = InputStream(input('? '))
 while input_stream:
     lexer = lcLexer(input_stream)
@@ -127,18 +138,24 @@ while input_stream:
     visitor = TreeVisitor()
     expresion = visitor.visit(tree)
 
-    # Escribe la expresion inicial con correcta parentizacion (tasca 2)
-    print("Arbre: ")
-    print(show(expresion))
+    if expresion != 0:
+        # Escribe la expresion inicial con correcta parentizacion (tasca 2)
+        print("Arbre: ")
+        print(show(expresion))
 
-    # Evalua la expresion usando la estategia de orden de reduccón normal (tasca 3)
-    evaluated_expression = evaluate_term(expresion, max_reductions=100)
+        # Evalua la expresion usando la estategia de orden de reduccón normal (tasca 3)
+        evaluated_expression = evaluate_term(expresion, max_reductions=100)
 
-    #escribe Nothing si este agota la cantidad de steps que ha de hacer
-    print("Resultat: ")
-    if evaluated_expression == expresion:
-        print("Nothing")
+        #escribe Nothing si este agota la cantidad de steps que ha de hacer
+        print("Resultat: ")
+        if evaluated_expression == expresion:
+            print("Nothing")
+        else:
+            print(show(evaluated_expression))
     else:
-        print(show(evaluated_expression))
+        #ha sido una asignacion macro escribimos todas las macros (tasca 4)
+        for key, value in macros.items():
+            print(key + " ≡ " + show(value))
+
 
     input_stream = InputStream(input('? '))
