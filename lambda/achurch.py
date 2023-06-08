@@ -23,6 +23,9 @@ class Application:
 Term = Variable | Abstraction | Application
 
 class TreeVisitor(lcVisitor):
+    def __init__(self):
+        self.macros = {}
+
     def visitVariable(self, ctx):
         [var] = list(ctx.getChildren())
         return Variable(var.getText())
@@ -45,7 +48,7 @@ class TreeVisitor(lcVisitor):
     
     def visitMacro(self, ctx):
         [ID] = list(ctx.getChildren())
-        return macros[str(ID)]
+        return self.macros[str(ID)]
 
     def visitAplicacio(self, ctx):
         [function,argument] = list(ctx.getChildren())
@@ -57,8 +60,12 @@ class TreeVisitor(lcVisitor):
     
     def visitAssignacio1(self, ctx):  
         [m, eq, terme] = list (ctx.getChildren())
-        macros[str(m)] = self.visit(terme)
+        self.macros[str(m)] = self.visit(terme)
         return 0
+    
+    def printMacros(self):
+        for key, value in self.macros.items():
+            print(key + " ≡ " + show(value))
     
 def show(t: Term):
     match t:
@@ -127,7 +134,7 @@ def evaluate_term(term: Term, max_reductions: int) -> Term:
 
 
 
-macros = {}
+visitor = TreeVisitor()
 input_stream = InputStream(input('? '))
 while input_stream:
     lexer = lcLexer(input_stream)
@@ -135,7 +142,6 @@ while input_stream:
     parser = lcParser(token_stream)
     tree = parser.root()
 
-    visitor = TreeVisitor()
     expresion = visitor.visit(tree)
 
     if expresion != 0:
@@ -154,8 +160,7 @@ while input_stream:
             print(show(evaluated_expression))
     else:
         #ha sido una asignacion macro escribimos todas las macros (tasca 4)
-        for key, value in macros.items():
-            print(key + " ≡ " + show(value))
+        visitor.printMacros()
 
 
     input_stream = InputStream(input('? '))
