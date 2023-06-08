@@ -81,21 +81,6 @@ def show(t: Term):
             return "(" + show(function) + show(argument) + ")"
         
 def evaluate_term(term: Term, max_reductions: int) -> Term:
-    def beta_reduction(term: Term) -> Term:
-        if isinstance(term, Application) and isinstance(term.function, Abstraction):
-            abstraction = term.function
-            argument = term.argument
-
-            #creo que aqui tendria que añadir una clase de funcion que haga 
-            #check for alpha conversions antes de substituir para ver si
-            #la substitucion genera conflictos y entonces renombrar
-
-            new_term = substitute(abstraction.body, {abstraction.variable: argument})
-
-            print("β-reducció:")
-            print(show(term) + " → " + show(new_term))
-            return new_term
-        return term
 
     def substitute(term: Term, substitutions: dict) -> Term:
         match term:
@@ -114,32 +99,49 @@ def evaluate_term(term: Term, max_reductions: int) -> Term:
                 return Application(new_function, new_argument)
 
 
-    def evaluate_recursive(term: Term, reductions: int) -> Term:
-        if reductions <= 0:
-            return term
-
-        term = beta_reduction(term)
+    def evaluate_a_beta(term: Term) -> Term:
 
         match term:
+
+            case Variable(var):
+                return term, False
+            
+            case Abstraction(var,body):
+                new_body, modif = evaluate_a_beta(body)
+                return Abstraction(var, new_body), modif
+            
             case Application(function,argument):
 
-                new_function = evaluate_recursive(function, reductions - 1)
-                if new_function != function:
-                    return evaluate_recursive(Application(new_function, argument), reductions - 1)
+                if isinstance(term.function, Abstraction):
+
+                    #aqui buscare las alfa conversiones necesarias
+
+                    new_term = substitute(term.function.body, {term.function.variable: argument})
+                    print("β-reducció:")
+                    print(show(term) + " → " + show(new_term))
+
+                    return new_term, True
                 
-                new_argument = evaluate_recursive(argument, reductions - 1)
-                if new_argument != argument:
-                    return evaluate_recursive(Application(function, new_argument), reductions - 1)
-                    
-                
-            case Abstraction(var,body):
-                new_body = evaluate_recursive(body, reductions - 1)
-                if new_body != body:
-                    return evaluate_recursive(Abstraction(var, new_body), reductions - 1)
+                else:
+
+                    new_function, modif = evaluate_a_beta(function)
+                    if modif:
+                        return Application(new_function, argument), modif
+
+                    new_argument, modif = evaluate_a_beta(argument)
+                    return Application(function, new_argument), modif
                 
         return term
     
-    return evaluate_recursive(term, max_reductions)
+    
+    for i in range(1,max_reductions):
+        new_term, modif = evaluate_a_beta(term)
+        if not modif:
+            return new_term
+        term = new_term
+    
+    #si llegamos aqui no hemos encontrado en los pasos el resultado
+    return 0
 
 
 
@@ -157,9 +159,10 @@ while input_stream:
         # Escribe la expresion inicial con correcta parentizacion (tasca 2)
         print("Arbre: ")
         print(show(expresion))
+        # print(expresion)
 
         # Evalua la expresion usando la estategia de orden de reduccón normal (tasca 3)
-        evaluated_expression = evaluate_term(expresion, max_reductions=100)
+        evaluated_expression = evaluate_term(expresion, max_reductions=10)
 
         #escribe Nothing si este agota la cantidad de steps que ha de hacer
         print("Resultat: ")
