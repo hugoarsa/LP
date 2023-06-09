@@ -1,5 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
+import string
 
 from antlr4 import *
 from lcLexer import lcLexer
@@ -73,16 +74,112 @@ class TreeVisitor(lcVisitor):
     
 def show(t: Term):
     match t:
+
         case Variable(name):
             return name
+        
         case Abstraction(var,term):
             return "(" + "λ" + var + "." + show(term) + ")"
+        
         case Application(function,argument):
             return "(" + show(function) + show(argument) + ")"
         
 def evaluate_term(term: Term, max_reductions: int) -> Term:
 
-    def substitute(term: Term, substitutions: dict) -> Term:
+    #genera una nueva variable la cual no este presente en el termino     
+    def generate_new_variable_name(term: Term) -> str:
+        existing_variables = get_variables(term)
+        alphabet = string.ascii_lowercase
+
+        for char in alphabet:
+            if char not in existing_variables:
+                return char
+
+        raise ValueError("No se pudo generar un nuevo nombre de variable.")
+
+    #da un set de todas las variables que se encuentran en un termino
+    def get_variables(term: Term) -> set[str]:
+        variables = set()
+        if isinstance(term, Variable):
+            variables.add(term.name)
+        elif isinstance(term, Abstraction):
+            variables.add(term.variable)
+            variables.update(get_variables(term.body))
+        elif isinstance(term, Application):
+            variables.update(get_variables(term.function))
+            variables.update(get_variables(term.argument))
+        return variables
+
+    #esta funcion toma un termino, una variable a reemplazar y una nueva variable propuesta
+    def replace_alfa(t: Term, old_variable: str, new_variable: str) -> Term:
+        match t:
+
+            case Variable(name):
+
+                if name == old_variable:
+                    return Variable(new_variable)
+                
+                return t
+            
+            case Abstraction(var,body):
+
+                if var == old_variable:
+                    var = new_variable
+
+                body = replace_alfa(body,old_variable,new_variable)
+                return Abstraction(var,body)
+            
+            case Application(function,argument):
+
+                function = replace_alfa(function, old_variable, new_variable)
+                argument = replace_alfa(argument, old_variable, new_variable)
+                return Application(function,argument)
+            
+    def alfas_rec(term: Term, variables_to_replace, var_original) -> Term:
+        match term:
+
+            case Abstraction(var,body):
+
+                if var in variables_to_replace and var_original in get_variables(body):   
+
+                    new_variable = generate_new_variable_name(body)
+                    #print("en el body " + show(body) + " de la abstracion "+ show(term))
+                    #print("reemplazaremos la variable " + var + " por la variable " + new_variable)
+                    new_body = replace_alfa(body,var,new_variable)
+                    return Abstraction(new_variable,new_body)
+                
+                new_body = alfas_rec(body, variables_to_replace, var_original)
+                return Abstraction(var,new_body)
+            
+            case Application(function,argument):
+
+                new_function = alfas_rec(function, variables_to_replace, var_original)
+                new_argument = alfas_rec(argument, variables_to_replace, var_original)
+                return Application(new_function,new_argument)
+        
+        return term
+    
+    def do_needed_alfas(term: Term) -> Term:
+
+        variables_to_replace = get_variables(term.argument)
+
+        if term.function.variable in variables_to_replace:
+            variables_to_replace.remove(term.function.variable)
+
+ 
+        #print("alfas_rec(" + show(term.function.body) + ", variables to replace, " + term.function.variable + ")")
+
+        new_body = alfas_rec(term.function.body, variables_to_replace, term.function.variable)
+
+        if new_body != term.function.body:
+            print("α-conversió:")
+            print(show(term.function) + " → " + show(Abstraction(term.function.variable,new_body)))
+            
+            return Application(Abstraction(term.function.variable,new_body),term.argument)
+        
+        return term
+    
+    def replace_beta(term: Term, substitutions: dict) -> Term:
         match term:
             case Variable(name):
                 if name in substitutions:
@@ -91,11 +188,11 @@ def evaluate_term(term: Term, max_reductions: int) -> Term:
             case Abstraction(variable,body):
                 new_substitutions = {key: value for key, value in substitutions.items()}
                 new_substitutions.pop(variable, None)
-                new_body = substitute(body, new_substitutions)
+                new_body = replace_beta(body, new_substitutions)
                 return Abstraction(variable, new_body)
             case Application(function,argument):
-                new_function = substitute(function, substitutions)
-                new_argument = substitute(argument, substitutions)
+                new_function = replace_beta(function, substitutions)
+                new_argument = replace_beta(argument, substitutions)
                 return Application(new_function, new_argument)
 
 
@@ -114,9 +211,10 @@ def evaluate_term(term: Term, max_reductions: int) -> Term:
 
                 if isinstance(term.function, Abstraction):
 
-                    #aqui buscare las alfa conversiones necesarias
+                    alfa_term = do_needed_alfas(term)
 
-                    new_term = substitute(term.function.body, {term.function.variable: argument})
+                    new_term = replace_beta(alfa_term.function.body, {alfa_term.function.variable: argument})
+
                     print("β-reducció:")
                     print(show(term) + " → " + show(new_term))
 
@@ -166,7 +264,7 @@ while input_stream:
 
         #escribe Nothing si este agota la cantidad de steps que ha de hacer
         print("Resultat: ")
-        if evaluated_expression == expresion:
+        if evaluated_expression == 0:
             print("Nothing")
         else:
             print(show(evaluated_expression))
