@@ -7,6 +7,7 @@ from lcLexer import lcLexer
 from lcParser import lcParser
 from lcVisitor import lcVisitor
 
+
 @dataclass
 class Variable:
     name: str
@@ -278,14 +279,15 @@ async def show_macros(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 
         await update.message.reply_text("No macros defined, define macros with: \n\"MACROINCAPS\" (=|≡) expression")
 
-def makeGraph(t:Term,graph,lligades,):
+def makeGraph(t:Term,graph,bounded):
     match t:
         case Variable(v):
             node = pydot.Node(name=str(uuid.uuid1()),label=v,shape="plaintext")
             graph.add_node(node)
 
-            if v in lligades:
-                edge = pydot.Edge(node, lligades[v])
+            #I add the bounded variables dashed lines
+            if v in bounded:
+                edge = pydot.Edge(node, bounded[v])
                 edge.set_style("dashed")
                 graph.add_edge(edge)
 
@@ -296,12 +298,12 @@ def makeGraph(t:Term,graph,lligades,):
             node = pydot.Node(name=str(uuid.uuid1()), label='@', shape="plaintext")
             graph.add_node(node)
 
-            secure = lligades
-            func_node = makeGraph(function,graph,lligades)
+            secure = bounded
+            func_node = makeGraph(function,graph,bounded)
             graph.add_edge(pydot.Edge(node,func_node))
 
-            lligades = secure
-            arg_node = makeGraph(argument,graph,lligades)
+            bounded = secure
+            arg_node = makeGraph(argument,graph,bounded)
             graph.add_edge(pydot.Edge(node,arg_node))
 
             return node
@@ -311,9 +313,9 @@ def makeGraph(t:Term,graph,lligades,):
             node = pydot.Node(name=str(uuid.uuid1()), label="λ" + var, shape="plaintext")
             graph.add_node(node)
 
-            lligades[var] = node
+            bounded[var] = node
 
-            child_node = makeGraph(body, graph, lligades)
+            child_node = makeGraph(body, graph, bounded)
             graph.add_edge(pydot.Edge(node, child_node))
 
             return node
