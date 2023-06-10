@@ -233,6 +233,8 @@ async def evaluate_term(term: Term, max_reductions: int, update: Update) -> Term
 
 #cosas de telegram ------------------------------------------------------------------------------------
 import logging
+import pydot
+import uuid
 from telegram import __version__ as TG_VER
 from telegram import ForceReply, Update
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
@@ -276,6 +278,54 @@ async def show_macros(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 
         await update.message.reply_text("No macros defined, define macros with: \n\"MACROINCAPS\" (=|≡) expression")
 
+def makeGraph(t:Term,graph,lligades,):
+    match t:
+        case Variable(v):
+            node = pydot.Node(name=str(uuid.uuid1()),label=v,shape="plaintext")
+            graph.add_node(node)
+
+            if v in lligades:
+                edge = pydot.Edge(node, lligades[v])
+                edge.set_style("dashed")
+                graph.add_edge(edge)
+
+            return node
+
+        case NApplication(function,argument):
+
+            node = pydot.Node(name=str(uuid.uuid1()), label='@', shape="plaintext")
+            graph.add_node(node)
+
+            secure = lligades
+            func_node = makeGraph(function,graph,lligades)
+            graph.add_edge(pydot.Edge(node,func_node))
+
+            lligades = secure
+            arg_node = makeGraph(argument,graph,lligades)
+            graph.add_edge(pydot.Edge(node,arg_node))
+
+            return node
+        
+        case Abstraction(var,body):
+
+            node = pydot.Node(name=str(uuid.uuid1()), label="λ" + var, shape="plaintext")
+            graph.add_node(node)
+
+            lligades[var] = node
+
+            child_node = makeGraph(body, graph, lligades)
+            graph.add_edge(pydot.Edge(node, child_node))
+
+            return node
+
+
+
+async def outputGraph(t:Term, update: Update, context: ContextTypes.DEFAULT_TYPE):
+    graph = pydot.Dot(graph_type='digraph')
+    makeGraph(t,graph,dict())
+    graph.write_png('graph.png')
+    await context.bot.send_photo(chat_id=update.message.chat_id, photo=open('graph.png', 'rb'))
+    
 async def evaluate_expression(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     input_text = update.message.text
@@ -291,6 +341,8 @@ async def evaluate_expression(update: Update, context: ContextTypes.DEFAULT_TYPE
     if expresion:
         await update.message.reply_text(show(expresion))
 
+        await outputGraph(expresion,update,context)
+
         max_reductions=20
 
         await update.message.reply_text("beggining evaluation...")
@@ -300,7 +352,10 @@ async def evaluate_expression(update: Update, context: ContextTypes.DEFAULT_TYPE
         await update.message.reply_text("evaluation complete!")
 
         if evaluated_expression:
+
             await update.message.reply_text(show(evaluated_expression))
+            await outputGraph(evaluated_expression,update,context)
+
         else:
             await update.message.reply_text("Nothing, cannot be computed on " + str(max_reductions) + " steps")
 

@@ -13,4 +13,4 @@ visitors:
 	antlr4 -Dlanguage=Python3 -no-listener -visitor $(GRAMMAR).g4
 
 clean:
-	rm -rf *.interp *.tokens *Parser.py *Visitor.py *Lexer.py __pycache__ .antlr 
+	rm -rf *.interp *.tokens *Parser.py *Visitor.py *Lexer.py __pycache__ .antlr *.png
