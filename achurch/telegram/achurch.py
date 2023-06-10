@@ -17,11 +17,11 @@ class Abstraction:
     body: Term
 
 @dataclass
-class Application:
+class NApplication:
     function: Term
     argument: Term
 
-Term = Variable | Abstraction | Application
+Term = Variable | Abstraction | NApplication
 
 class TreeVisitor(lcVisitor):
     def __init__(self, macros_usuari):
@@ -37,7 +37,7 @@ class TreeVisitor(lcVisitor):
     
     def visitMacroInfija(self, ctx):
         [terme1,ID,terme2] = list(ctx.getChildren())
-        return Application(Application(self.macros[str(ID)],self.visit(terme1)),self.visit(terme2))
+        return NApplication(NApplication(self.macros[str(ID)],self.visit(terme1)),self.visit(terme2))
 
     def visitAbstraccio(self, ctx):
         [op1, vars, op2, terme] = list(ctx.getChildren())
@@ -57,7 +57,7 @@ class TreeVisitor(lcVisitor):
 
     def visitAplicacio(self, ctx):
         [function,argument] = list(ctx.getChildren())
-        return Application(self.visit(function), self.visit(argument))
+        return NApplication(self.visit(function), self.visit(argument))
 
     def visitRoot(self, ctx):
         [terme] = list(ctx.getChildren())
@@ -68,20 +68,18 @@ class TreeVisitor(lcVisitor):
         self.macros[str(m)] = self.visit(terme)
         return 0
     
-    def printMacros(self):
-        for key, value in self.macros.items():
-            print(key + " ≡ " + show(value))  
+    def returnMacros(self):  
+        return self.macros
 
 def show(t: Term) -> string:
     match t:
-
         case Variable(name):
             return name
         
         case Abstraction(var,term):
             return "(" + "λ" + var + "." + show(term) + ")"
         
-        case Application(function,argument):
+        case NApplication(function,argument):
             return "(" + show(function) + show(argument) + ")"
 
 import logging
@@ -114,12 +112,8 @@ from telegram import ForceReply, Update
 
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
-# Enable logging
-
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-# Define a few command handlers. These usually take the two arguments update and context.
 
 async def show_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
@@ -136,17 +130,25 @@ async def show_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     )
 
 async def show_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await context.bot.send_message(chat_id=update.message.chat_id, 
-                                   text="\\start \n \\author \n \\help \n \\macros \n Lambda Calculus Expression to eval \n MACRO = Lambda Calculus Expression")
+
+    await update.message.reply_text("/start \n/author \n/help \n/macros \nLambda Calculus Expression to eval \nMACRO = Lambda Calculus Expression")
 
 async def show_author(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await context.bot.send_message(chat_id=update.message.chat_id, 
-                                   text="AChurchBot! \n @ Hugo Aranda Sanchez, 2023")
+
+    await update.message.reply_text("AChurchBot! \n@ Hugo Aranda Sanchez, 2023")
     
 async def show_macros(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await context.bot.send_message(chat_id=update.message.chat_id, 
-                                   text="AChurchBot! \n @ Hugo Aranda Sanchez, 2023")
-    
+
+    macros = context.user_data.get("macros_user")
+
+    if macros:
+
+        for key, var in macros.items():
+            await update.message.reply_text(key + " ≡ " + show(var))
+
+    else: 
+
+        await update.message.reply_text("No macros defined, define macros with \"MACROINCAPS\" (=|≡) expression")
 
 async def evaluate_expression(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
@@ -160,7 +162,9 @@ async def evaluate_expression(update: Update, context: ContextTypes.DEFAULT_TYPE
 
     expresion = visitor.visit(tree)
 
-    await update.message.reply_text(show(expresion))
+    if expresion:
+        await update.message.reply_text(show(expresion))
+
 
 def main() -> None:
 
