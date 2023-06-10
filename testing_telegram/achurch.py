@@ -24,8 +24,8 @@ class Application:
 Term = Variable | Abstraction | Application
 
 class TreeVisitor(lcVisitor):
-    def __init__(self):
-        self.macros = {}
+    def __init__(self, macros_usuari):
+        self.macros = macros_usuari
 
     def visitVariable(self, ctx):
         [var] = list(ctx.getChildren())
@@ -70,8 +70,8 @@ class TreeVisitor(lcVisitor):
     
     def printMacros(self):
         for key, value in self.macros.items():
-            print(key + " ≡ " + show(value))
-    
+            print(key + " ≡ " + show(value))  
+
 def show(t: Term) -> string:
     match t:
 
@@ -84,7 +84,7 @@ def show(t: Term) -> string:
         case Application(function,argument):
             return "(" + show(function) + show(argument) + ")"
         
-def evaluate_term(term: Term, max_reductions: int) -> Term:
+async def evaluate_term(term: Term, max_reductions: int, update, context) -> Term:
 
     #genera una nueva variable la cual no este presente en el termino     
     def generate_new_variable_name(term: Term) -> str:
@@ -196,7 +196,7 @@ def evaluate_term(term: Term, max_reductions: int) -> Term:
                 return Application(new_function, new_argument)
 
 
-    def evaluate_a_beta(term: Term) -> Term:
+    def evaluate_a_beta(term: Term,update, context) -> Term:
 
         match term:
 
@@ -233,7 +233,7 @@ def evaluate_term(term: Term, max_reductions: int) -> Term:
     
     
     for i in range(1,max_reductions):
-        new_term, modif = evaluate_a_beta(term)
+        new_term, modif = evaluate_a_beta(term,update, context)
         if not modif:
             return new_term
         term = new_term
@@ -242,10 +242,75 @@ def evaluate_term(term: Term, max_reductions: int) -> Term:
     return 0
 
 
+import logging
 
-visitor = TreeVisitor()
-input_stream = InputStream(input('? '))
-while input_stream:
+
+from telegram import __version__ as TG_VER
+
+try:
+
+    from telegram import __version_info__
+
+except ImportError:
+
+    __version_info__ = (0, 0, 0, 0, 0)  # type: ignore[assignment]
+
+
+if __version_info__ < (20, 0, 0, "alpha", 1):
+
+    raise RuntimeError(
+
+        f"This example is not compatible with your current PTB version {TG_VER}. To view the "
+
+        f"{TG_VER} version of this example, "
+
+        f"visit https://docs.python-telegram-bot.org/en/v{TG_VER}/examples.html"
+
+    )
+
+from telegram import ForceReply, Update
+
+from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
+
+# Enable logging
+
+logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Define a few command handlers. These usually take the two arguments update and context.
+
+async def show_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    
+    user = update.effective_user
+
+    context.user_data["macros_user"] = {}
+
+    await update.message.reply_html(
+
+        rf"Hi {user.mention_html()} I'm Hugo's AChurch Bot!",
+
+        reply_markup=ForceReply(selective=True),
+
+    )
+
+async def show_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await context.bot.send_message(chat_id=update.message.chat_id, 
+                                   text="\\start \n \\author \n \\help \n \\macros \n Lambda Calculus Expression to eval \n MACRO = Lambda Calculus Expression")
+
+async def show_author(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await context.bot.send_message(chat_id=update.message.chat_id, 
+                                   text="AChurchBot! \n @ Hugo Aranda Sanchez, 2023")
+    
+async def show_macros(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await context.bot.send_message(chat_id=update.message.chat_id, 
+                                   text="AChurchBot! \n @ Hugo Aranda Sanchez, 2023")
+    
+
+async def evaluate_expression(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
+    input_text = update.message.text
+    input_stream = InputStream(input_text)
+    visitor = TreeVisitor(context.user_data.get("macros_user"))
     lexer = lcLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
     parser = lcParser(token_stream)
@@ -253,24 +318,21 @@ while input_stream:
 
     expresion = visitor.visit(tree)
 
-    if expresion != 0:
-        # Escribe la expresion inicial con correcta parentizacion (tasca 2)
-        print("Arbre: ")
-        print(show(expresion))
-        # print(expresion)
+    await update.message.reply_text(show(expresion))
 
-        # Evalua la expresion usando la estategia de orden de reduccón normal (tasca 3)
-        evaluated_expression = evaluate_term(expresion, max_reductions=100)
+def main() -> None:
 
-        #escribe Nothing si este agota la cantidad de steps que ha de hacer
-        print("Resultat: ")
-        if evaluated_expression == 0:
-            print("Nothing")
-        else:
-            print(show(evaluated_expression))
-    else:
-        #ha sido una asignacion macro escribimos todas las macros (tasca 4)
-        visitor.printMacros()
+    application = Application.builder().token("6021919629:AAESJhrndta0eAlPLRMw1ehumFnq7NQ5A6M").build()
 
+    application.add_handler(CommandHandler('start', show_start))
+    application.add_handler(CommandHandler('help', show_help))
+    application.add_handler(CommandHandler('author', show_author))
+    application.add_handler(CommandHandler('macros', show_macros))
 
-    input_stream = InputStream(input('? '))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, evaluate_expression))
+
+    application.run_polling(1.0)
+
+if __name__ == "__main__":
+
+    main()
