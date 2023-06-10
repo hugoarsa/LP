@@ -81,35 +81,160 @@ def show(t: Term) -> string:
         
         case NApplication(function,argument):
             return "(" + show(function) + show(argument) + ")"
+        
+async def evaluate_term(term: Term, max_reductions: int, update: Update) -> Term:
 
+    #genera una nueva variable la cual no este presente en el termino     
+    def generate_new_variable_name(term: Term) -> str:
+        existing_variables = get_variables(term)
+        alphabet = string.ascii_lowercase
+
+        for char in alphabet:
+            if char not in existing_variables:
+                return char
+
+        raise ValueError("No se pudo generar un nuevo nombre de variable.")
+
+    #da un set de todas las variables que se encuentran en un termino
+    def get_variables(term: Term) -> set[str]:
+        variables = set()
+        if isinstance(term, Variable):
+            variables.add(term.name)
+        elif isinstance(term, Abstraction):
+            variables.add(term.variable)
+            variables.update(get_variables(term.body))
+        elif isinstance(term, NApplication):
+            variables.update(get_variables(term.function))
+            variables.update(get_variables(term.argument))
+        return variables
+
+    #esta funcion toma un termino, una variable a reemplazar y una nueva variable propuesta
+    def replace_alfa(t: Term, old_variable: str, new_variable: str) -> Term:
+        match t:
+
+            case Variable(name):
+
+                if name == old_variable:
+                    return Variable(new_variable)
+                
+                return t
+            
+            case Abstraction(var,body):
+
+                if var == old_variable:
+                    var = new_variable
+
+                body = replace_alfa(body,old_variable,new_variable)
+                return Abstraction(var,body)
+            
+            case NApplication(function,argument):
+
+                function = replace_alfa(function, old_variable, new_variable)
+                argument = replace_alfa(argument, old_variable, new_variable)
+                return NApplication(function,argument)
+            
+    def alfas_rec(term: Term, variables_to_replace, var_original) -> Term:
+        match term:
+
+            case Abstraction(var,body):
+
+                if var in variables_to_replace and var_original in get_variables(body):   
+                    new_variable = generate_new_variable_name(body)
+
+                    new_body = replace_alfa(body,var,new_variable)
+                    return Abstraction(new_variable,new_body)
+                
+                new_body = alfas_rec(body, variables_to_replace, var_original)
+                return Abstraction(var,new_body)
+            
+            case NApplication(function,argument):
+
+                new_function = alfas_rec(function, variables_to_replace, var_original)
+                new_argument = alfas_rec(argument, variables_to_replace, var_original)
+                return NApplication(new_function,new_argument)
+        
+        return term
+    
+    async def do_needed_alfas(term: Term, update: Update) -> Term:
+
+        variables_to_replace = get_variables(term.argument)
+
+        if term.function.variable in variables_to_replace:
+            variables_to_replace.remove(term.function.variable)
+
+        new_body = alfas_rec(term.function.body, variables_to_replace, term.function.variable)
+
+        if new_body != term.function.body:
+
+            await update.message.reply_text(show(term.function) + " →α→ " + show(Abstraction(term.function.variable,new_body)))
+            
+            return NApplication(Abstraction(term.function.variable,new_body),term.argument)
+        
+        return term
+    
+    def replace_beta(term: Term, substitutions: dict) -> Term:
+        match term:
+            case Variable(name):
+                if name in substitutions:
+                    return substitutions[term.name]
+                return term
+            case Abstraction(variable,body):
+                new_substitutions = {key: value for key, value in substitutions.items()}
+                new_substitutions.pop(variable, None)
+                new_body = replace_beta(body, new_substitutions)
+                return Abstraction(variable, new_body)
+            case NApplication(function,argument):
+                new_function = replace_beta(function, substitutions)
+                new_argument = replace_beta(argument, substitutions)
+                return NApplication(new_function, new_argument)
+
+
+    async def evaluate_a_beta(term: Term, update: Update) -> Term:
+        match term:
+
+            case Variable(var):
+                return term, False
+            
+            case Abstraction(var,body):
+                new_body, modif = await evaluate_a_beta(body, update)
+                return Abstraction(var, new_body), modif
+            
+            case NApplication(function,argument):
+
+                if isinstance(term.function, Abstraction):
+
+                    alfa_term = await do_needed_alfas(term, update)
+
+                    new_term = replace_beta(alfa_term.function.body, {alfa_term.function.variable: argument})
+
+                    await update.message.reply_text(show(alfa_term) + " →β→ " + show(new_term))
+
+                    return new_term, True
+                
+                else:
+
+                    new_function, modif = await evaluate_a_beta(function, update)
+                    if modif:
+                        return NApplication(new_function, argument), modif
+
+                    new_argument, modif = await evaluate_a_beta(argument, update)
+                    return NApplication(function, new_argument), modif
+                
+        return term
+    
+    
+    for i in range(1,max_reductions):
+        new_term, modif = await evaluate_a_beta(term, update)
+        if not modif:
+            return new_term
+        term = new_term
+
+    return 0
+
+#cosas de telegram ------------------------------------------------------------------------------------
 import logging
-
-
 from telegram import __version__ as TG_VER
-
-try:
-
-    from telegram import __version_info__
-
-except ImportError:
-
-    __version_info__ = (0, 0, 0, 0, 0)  # type: ignore[assignment]
-
-
-if __version_info__ < (20, 0, 0, "alpha", 1):
-
-    raise RuntimeError(
-
-        f"This example is not compatible with your current PTB version {TG_VER}. To view the "
-
-        f"{TG_VER} version of this example, "
-
-        f"visit https://docs.python-telegram-bot.org/en/v{TG_VER}/examples.html"
-
-    )
-
 from telegram import ForceReply, Update
-
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
@@ -142,13 +267,14 @@ async def show_macros(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     macros = context.user_data.get("macros_user")
 
     if macros:
-
+        output = ""
         for key, var in macros.items():
-            await update.message.reply_text(key + " ≡ " + show(var))
+            output = output + key + " ≡ " + show(var) + "\n"
+        await update.message.reply_text(output)
 
     else: 
 
-        await update.message.reply_text("No macros defined, define macros with \"MACROINCAPS\" (=|≡) expression")
+        await update.message.reply_text("No macros defined, define macros with: \n\"MACROINCAPS\" (=|≡) expression")
 
 async def evaluate_expression(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
@@ -164,6 +290,19 @@ async def evaluate_expression(update: Update, context: ContextTypes.DEFAULT_TYPE
 
     if expresion:
         await update.message.reply_text(show(expresion))
+
+        max_reductions=20
+
+        await update.message.reply_text("beggining evaluation...")
+
+        evaluated_expression = await evaluate_term(expresion, max_reductions ,update)
+
+        await update.message.reply_text("evaluation complete!")
+
+        if evaluated_expression:
+            await update.message.reply_text(show(evaluated_expression))
+        else:
+            await update.message.reply_text("Nothing, cannot be computed on " + str(max_reductions) + " steps")
 
 
 def main() -> None:
