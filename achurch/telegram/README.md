@@ -95,13 +95,15 @@ In order to start communicating with the bot you'll need to use the `/start` com
 
 The bot has a self explainatory `/help` command that hints all the commands and inline options the bot offers but I will explain them here in more detail.
 
-There is an `/author` command that shows as it is to be expected the author of the bot and date of latest relase.
+The commands shown by the `/help` are the following:
 
-There is a `/macros` command to show the macros that the interpreter has on memory at the moment.
+ * There is an `/author` command that shows as it is to be expected the author of the bot and date of latest relase.
 
-There is a `/maxsteps` command to show how many beta steps will be done untill giving up on the expression and a `/setsteps <NUM_STEPS>` command to change that setting.
+ * There is a `/macros` command to show the macros that the interpreter has on memory at the moment.
 
-There are `/showsteps` and `/hidesteps` commands in order to set up if you want to see the middle steps of a given evaluation or keep them private (in case you are maybe using this to study or just check and don't want the process to be spoiled to you)
+ * There is a `/maxsteps` command to show how many beta steps will be done untill giving up on the expression and a `/setsteps <NUM_STEPS>` command to change that setting.
+
+ * There are `/showsteps` and `/hidesteps` commands in order to set up if you want to see the middle steps of a given evaluation or keep them private (in case you are maybe using this to study or just check and don't want the process to be spoiled to you)
 
 Finally the inline options (no command) are basically two:
  * A lambda calculus expression to be evaluated with variables as [a-z] characters and lambdas as `\` or `λ`
