@@ -104,8 +104,8 @@ There is a `/maxsteps` command to show how many beta steps will be done untill g
 There are `/showsteps` and `/hidesteps` commands in order to set up if you want to see the middle steps of a given evaluation or keep them private (in case you are maybe using this to study or just check and don't want the process to be spoiled to you)
 
 Finally the inline options (no command) are basically two:
-Markup : * A lambda calculus expression to be evaluated with variables as [a-z] characters and lambdas as `\` or `λ`
-         * A macro or infix macro to be registered with sintax `MACROINCAPS =|≡ lambda calculus expression
+ * A lambda calculus expression to be evaluated with variables as [a-z] characters and lambdas as `\` or `λ`
+ * A macro or infix macro to be registered with sintax `MACROINCAPS =|≡ lambda calculus expression
 
 
 ## Project status
