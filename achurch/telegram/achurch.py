@@ -96,18 +96,17 @@ def show(t: Term) -> string:
             return "(" + show(function) + show(argument) + ")"
 
 
-async def evaluate_term(term: Term, max_reductions: int, update: Update) -> Term:
+async def evaluate_term(term: Term, max_reductions: int, verbose: bool, update: Update) -> Term:
 
     # it generates a new variable for a particular term
-    def generate_new_variable_name(term: Term) -> str:
-        existing_variables = get_variables(term)
+    def generate_new_variable_name(existing_variables: set[str]) -> str:
         alphabet = string.ascii_lowercase
 
         for char in alphabet:
             if char not in existing_variables:
                 return char
 
-        raise ValueError("No se pudo generar un nuevo nombre de variable.")
+        raise ValueError("Cannot generate any new variables")
 
     # gives a set of all variables within a term
     def get_variables(term: Term) -> set[str]:
@@ -146,31 +145,32 @@ async def evaluate_term(term: Term, max_reductions: int, update: Update) -> Term
                 argument = replace_alfa(argument, old_variable, new_variable)
                 return NApplication(function, argument)
 
-    def alfas_rec(term: Term, variables_to_replace, var_original) -> Term:
+    def alfas_rec(term: Term, used_vars, variables_to_replace, var_original) -> Term:
         match term:
 
             case NAbstraction(var, body):
                 # if we need to preform an alpha conversion we do so
                 if var in variables_to_replace and var_original in get_variables(body):
-                    new_variable = generate_new_variable_name(body)
+                    new_variable = generate_new_variable_name(used_vars)
 
                     new_body = replace_alfa(body, var, new_variable)
-                    return NAbstraction(new_variable, new_body)
 
-                new_body = alfas_rec(body, variables_to_replace, var_original)
+                    used_vars.add(new_variable)
+                    new_body2 = alfas_rec(new_body, used_vars, variables_to_replace, var_original)
+                    return NAbstraction(new_variable, new_body2)
+
+                new_body = alfas_rec(body, used_vars, variables_to_replace, var_original)
                 return NAbstraction(var, new_body)
 
             case NApplication(function, argument):
 
-                new_function = alfas_rec(
-                    function, variables_to_replace, var_original)
-                new_argument = alfas_rec(
-                    argument, variables_to_replace, var_original)
+                new_function = alfas_rec(function, used_vars, variables_to_replace, var_original)
+                new_argument = alfas_rec(argument, used_vars, variables_to_replace, var_original)
                 return NApplication(new_function, new_argument)
 
         return term
 
-    async def do_needed_alfas(term: Term, update: Update) -> Term:
+    async def do_needed_alfas(term: Term, used_vars, verbose: bool, update: Update) -> Term:
 
         variables_to_replace = get_variables(term.argument)
 
@@ -178,11 +178,13 @@ async def evaluate_term(term: Term, max_reductions: int, update: Update) -> Term
             variables_to_replace.remove(term.function.variable)
 
         new_body = alfas_rec(term.function.body,
+                             used_vars,
                              variables_to_replace,
                              term.function.variable)
 
         if new_body != term.function.body:
-            await update.message.reply_text(show(term.function) + " →α→ " + show(NAbstraction(term.function.variable, new_body)))
+            if verbose:
+                await update.message.reply_text(show(term.function) + " →α→ " + show(NAbstraction(term.function.variable, new_body)))
             return NApplication(NAbstraction(term.function.variable, new_body), term.argument)
 
         return term
@@ -208,43 +210,44 @@ async def evaluate_term(term: Term, max_reductions: int, update: Update) -> Term
                 new_argument = replace_beta(argument, substitutions)
                 return NApplication(new_function, new_argument)
 
-    async def evaluate_a_beta(term: Term, update: Update) -> Term:
+    async def evaluate_a_beta(term: Term, used_vars: set, verbose: bool, update: Update) -> Term:
         match term:
 
             case Variable(var):
                 return term, False
 
             case NAbstraction(var, body):
-                new_body, modif = await evaluate_a_beta(body, update)
+                new_body, modif = await evaluate_a_beta(body, used_vars, verbose, update)
                 return NAbstraction(var, new_body), modif
 
             case NApplication(function, argument):
 
                 if isinstance(term.function, NAbstraction):
 
-                    alfa_term = await do_needed_alfas(term, update)
+                    alfa_term = await do_needed_alfas(term, used_vars, verbose, update)
 
-                    new_term = replace_beta(
-                        alfa_term.function.body, {
-                            alfa_term.function.variable: argument})
+                    new_term = replace_beta(alfa_term.function.body, 
+                                            {alfa_term.function.variable: argument})
 
-                    await update.message.reply_text(show(alfa_term) + " →β→ " + show(new_term))
+                    if verbose:
+                        await update.message.reply_text(show(alfa_term) + " →β→ " + show(new_term))
 
                     return new_term, True
 
                 else:
 
-                    new_function, modif = await evaluate_a_beta(function, update)
+                    new_function, modif = await evaluate_a_beta(function, used_vars, verbose, update)
                     if modif:
                         return NApplication(new_function, argument), modif
 
-                    new_argument, modif = await evaluate_a_beta(argument, update)
+                    new_argument, modif = await evaluate_a_beta(argument, used_vars, verbose, update)
                     return NApplication(function, new_argument), modif
 
         return term
 
-    for i in range(1, max_reductions):
-        new_term, modif = await evaluate_a_beta(term, update)
+    for i in range(0, max_reductions):
+        set_used_vars = get_variables(term)
+        new_term, modif = await evaluate_a_beta(term, set_used_vars, verbose, update)
         if not modif:
             return new_term
         term = new_term
@@ -252,6 +255,8 @@ async def evaluate_term(term: Term, max_reductions: int, update: Update) -> Term
     return 0
 
 # a partir de aqui todo telegram ----------------------------------------
+# basado en el ejemplo: 
+# https://docs.python-telegram-bot.org/en/stable/examples.echobot.html
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -267,6 +272,8 @@ async def show_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 
     context.user_data["max_steps"] = 20
 
+    context.user_data["verbose"] = True
+
     await update.message.reply_html(
 
         rf"Hi {user.mention_html()} I'm Hugo's AChurch Bot!",
@@ -278,7 +285,8 @@ async def show_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 
 async def show_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
-    await update.message.reply_text("/start \n/author \n/help \n/macros \n/maxsteps \n/setsteps <NUM_STEPS> \nLambda Calculus Expression to eval \nMACRO = Lambda Calculus Expression")
+    await update.message.reply_text("/start \n/author \n/help \n/macros \n/maxsteps \n/setsteps <NUM_STEPS> \n/showsteps " 
+                                    + "\n/hidesteps \nLambda Calculus Expression to eval \nMACRO = Lambda Calculus Expression")
 
 
 async def show_author(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -291,6 +299,7 @@ async def show_macros(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     macros = context.user_data.get("macros_user")
 
     if macros:
+
         output = ""
         for key, var in macros.items():
             output = output + key + " ≡ " + show(var) + "\n"
@@ -301,17 +310,31 @@ async def show_macros(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         await update.message.reply_text("No macros defined, define macros with: \n\"MACROINCAPS\" (=|≡) expression")
 
 async def show_maxsteps(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
     max = context.user_data.get("max_steps")
     await update.message.reply_text("The maximum number of steps is " + str(max))
 
-async def show_setmaxsteps(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def setmaxsteps(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
     max = context.args[0]
     context.user_data["max_steps"] = int(max)
     await update.message.reply_text("The maximum number of steps has been modified to " + max)
 
+async def showsteps(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
+    context.user_data["verbose"] = True
+    await update.message.reply_text("Now we will show middle steps")
+
+async def hidesteps(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
+    context.user_data["verbose"] = False
+    await update.message.reply_text("Now we will hide middle steps")
+
 
 def makeGraph(t: Term, graph, bounded):
+
     match t:
+
         case Variable(v):
             node = pydot.Node(name=str(uuid.uuid1()),
                               label=v,
@@ -358,7 +381,8 @@ def makeGraph(t: Term, graph, bounded):
             return node
 
 
-async def outputGraph(t: Term, update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def outputGraph(t: Term, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
     graph = pydot.Dot(graph_type='digraph')
     makeGraph(t, graph, dict())
     graph.write_png('graph.png')
@@ -378,6 +402,7 @@ async def evaluate_expression(update: Update, context: ContextTypes.DEFAULT_TYPE
     expresion = visitor.visit(tree)
 
     if expresion:
+
         await update.message.reply_text(show(expresion))
 
         await outputGraph(expresion, update, context)
@@ -386,13 +411,16 @@ async def evaluate_expression(update: Update, context: ContextTypes.DEFAULT_TYPE
 
         await update.message.reply_text("beggining evaluation...")
 
-        evaluated_expression = await evaluate_term(expresion, max_reductions, update)
+        verbose = context.user_data.get("verbose")
+
+        evaluated_expression = await evaluate_term(expresion, max_reductions, verbose, update)
 
         await update.message.reply_text("evaluation complete!")
 
         if evaluated_expression:
 
             await update.message.reply_text(show(evaluated_expression))
+
             await outputGraph(evaluated_expression, update, context)
 
         else:
@@ -400,21 +428,19 @@ async def evaluate_expression(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 
 def main() -> None:
-
-    application = Application.builder().token(
-        "6021919629:AAESJhrndta0eAlPLRMw1ehumFnq7NQ5A6M").build()
+    #el username que responde a este token es @AChurch_HugoBot
+    application = Application.builder().token("6021919629:AAESJhrndta0eAlPLRMw1ehumFnq7NQ5A6M").build()
 
     application.add_handler(CommandHandler('start', show_start))
     application.add_handler(CommandHandler('help', show_help))
     application.add_handler(CommandHandler('author', show_author))
     application.add_handler(CommandHandler('macros', show_macros))
     application.add_handler(CommandHandler('maxsteps', show_maxsteps))
-    application.add_handler(CommandHandler('setsteps', show_setmaxsteps))
+    application.add_handler(CommandHandler('setsteps', setmaxsteps))
+    application.add_handler(CommandHandler('showsteps', showsteps))
+    application.add_handler(CommandHandler('hidesteps', hidesteps))
 
-    application.add_handler(
-        MessageHandler(
-            filters.TEXT & ~filters.COMMAND,
-            evaluate_expression))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, evaluate_expression))
 
     application.run_polling(1.0)
 
