@@ -199,11 +199,7 @@ async def evaluate_term(term: Term, max_reductions: int, verbose: bool, update: 
                 return term
 
             case NAbstraction(variable, body):
-                new_substitutions = {
-                    key: value for key,
-                    value in substitutions.items()}
-                new_substitutions.pop(variable, None)
-                new_body = replace_beta(body, new_substitutions)
+                new_body = replace_beta(body, substitutions)
                 return NAbstraction(variable, new_body)
 
             case NApplication(function, argument):
