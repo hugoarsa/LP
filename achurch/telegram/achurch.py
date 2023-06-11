@@ -48,8 +48,7 @@ class TreeVisitor(lcVisitor):
 
     def visitMacroInfija(self, ctx):
         [terme1, ID, terme2] = list(ctx.getChildren())
-        return NApplication(NApplication(
-            self.macros[str(ID)], self.visit(terme1)), self.visit(terme2))
+        return NApplication(NApplication(self.macros[str(ID)], self.visit(terme1)), self.visit(terme2))
 
     def visitAbstraccio(self, ctx):
         [op1, vars, op2, terme] = list(ctx.getChildren())
@@ -88,10 +87,10 @@ def show(t: Term) -> string:
 
         case Variable(name):
             return name
-        
+
         case NAbstraction(var, term):
             return "(" + "λ" + var + "." + show(term) + ")"
-        
+
         case NApplication(function, argument):
             return "(" + show(function) + show(argument) + ")"
 
@@ -112,16 +111,18 @@ async def evaluate_term(term: Term, max_reductions: int, verbose: bool, update: 
     def get_variables(term: Term) -> set[str]:
         variables = set()
 
-        if isinstance(term, Variable):
-            variables.add(term.name)
+        match term:
 
-        elif isinstance(term, NAbstraction):
-            variables.add(term.variable)
-            variables.update(get_variables(term.body))
+            case Variable(name):
+                variables.add(name)
 
-        elif isinstance(term, NApplication):
-            variables.update(get_variables(term.function))
-            variables.update(get_variables(term.argument))
+            case NAbstraction(var, body):
+                variables.add(var)
+                variables.update(get_variables(body))
+
+            case NApplication(function, argument):
+                variables.update(get_variables(function))
+                variables.update(get_variables(argument))
 
         return variables
 
@@ -196,7 +197,7 @@ async def evaluate_term(term: Term, max_reductions: int, verbose: bool, update: 
                 if name in substitutions:
                     return substitutions[term.name]
                 return term
-            
+
             case NAbstraction(variable, body):
                 new_substitutions = {
                     key: value for key,
@@ -204,7 +205,7 @@ async def evaluate_term(term: Term, max_reductions: int, verbose: bool, update: 
                 new_substitutions.pop(variable, None)
                 new_body = replace_beta(body, new_substitutions)
                 return NAbstraction(variable, new_body)
-            
+
             case NApplication(function, argument):
                 new_function = replace_beta(function, substitutions)
                 new_argument = replace_beta(argument, substitutions)
@@ -226,7 +227,7 @@ async def evaluate_term(term: Term, max_reductions: int, verbose: bool, update: 
 
                     alfa_term = await do_needed_alfas(term, used_vars, verbose, update)
 
-                    new_term = replace_beta(alfa_term.function.body, 
+                    new_term = replace_beta(alfa_term.function.body,
                                             {alfa_term.function.variable: argument})
 
                     if verbose:
@@ -255,7 +256,7 @@ async def evaluate_term(term: Term, max_reductions: int, verbose: bool, update: 
     return 0
 
 # a partir de aqui todo telegram ----------------------------------------
-# basado en el ejemplo: 
+# basado en el ejemplo:
 # https://docs.python-telegram-bot.org/en/stable/examples.echobot.html
 
 logging.basicConfig(
@@ -285,8 +286,8 @@ async def show_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 
 async def show_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
-    await update.message.reply_text("/start \n/author \n/help \n/macros \n/maxsteps \n/setsteps <NUM_STEPS> \n/showsteps " 
-                                    + "\n/hidesteps \nLambda Calculus Expression to eval \nMACRO = Lambda Calculus Expression")
+    await update.message.reply_text("/start \n/author \n/help \n/macros \n/maxsteps \n/setsteps <NUM_STEPS> \n/showsteps " +
+                                    "\n/hidesteps \nLambda Calculus Expression to eval \nMACRO = Lambda Calculus Expression")
 
 
 async def show_author(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -349,6 +350,20 @@ def makeGraph(t: Term, graph, bounded):
 
             return node
 
+        case NAbstraction(var, body):
+
+            node = pydot.Node(name=str(uuid.uuid1()),
+                              label="λ" + var,
+                              shape="plaintext")
+            graph.add_node(node)
+
+            bounded[var] = node
+
+            body_node = makeGraph(body, graph, bounded)
+            graph.add_edge(pydot.Edge(node, body_node))
+
+            return node
+
         case NApplication(function, argument):
 
             node = pydot.Node(name=str(uuid.uuid1()),
@@ -363,20 +378,6 @@ def makeGraph(t: Term, graph, bounded):
             bounded = secure
             arg_node = makeGraph(argument, graph, bounded)
             graph.add_edge(pydot.Edge(node, arg_node))
-
-            return node
-
-        case NAbstraction(var, body):
-
-            node = pydot.Node(name=str(uuid.uuid1()),
-                              label="λ" + var,
-                              shape="plaintext")
-            graph.add_node(node)
-
-            bounded[var] = node
-
-            child_node = makeGraph(body, graph, bounded)
-            graph.add_edge(pydot.Edge(node, child_node))
 
             return node
 
@@ -428,7 +429,7 @@ async def evaluate_expression(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 
 def main() -> None:
-    #el username que responde a este token es @AChurch_HugoBot
+    # the username associated with this token is @AChurch_HugoBot
     application = Application.builder().token("6021919629:AAESJhrndta0eAlPLRMw1ehumFnq7NQ5A6M").build()
 
     application.add_handler(CommandHandler('start', show_start))
